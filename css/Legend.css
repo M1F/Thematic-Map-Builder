@@ -1,0 +1,31 @@
+.legend {
+	background-repeat: no-repeat;
+	Overflow-x: hidden;
+	position:relative;
+	float:right;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: rgba(253, 114, 2, 1);
+	z-index:9999;	
+	box-shadow: 0 1px 7px rgba(0,0,0,0.65);
+	margin-left: 10px;
+	margin-bottom: 110px;
+	padding: 7px;
+	background-color: rgba(255, 255, 255, 0.95);
+	
+	text-align: left;
+	line-height: 18px;
+	color: #555;
+		
+}
+
+.legend i {
+	width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}

@@ -1,0 +1,18 @@
+.rose-control {
+	background-image: url('../images/rose.png');
+	width: 100px;
+    height: 100px;
+	position:relative;
+	float:left;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: rgba(253, 114, 2, 1);
+	z-index:1000;	
+	box-shadow: 0 1px 7px rgba(0,0,0,0.65);
+	margin-left: 10px;
+	margin-top: 10px;
+
+}
