@@ -1,0 +1,784 @@
+<!DOCTYPE>
+<html>
+<head>
+	<title>Map</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="css/leaflet.css" />
+	<!--[if lte IE 8]>
+	<link rel="stylesheet" href="css/leaflet.ie.css" />
+    <link rel="stylesheet" href="css/L.Control.Zoomslider.ie.css" />
+	<![endif]-->
+	<link rel="stylesheet" href="css/L.Control.Pan.css" />
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" href="css/L.Control.Pan.ie.css"/>
+    <![endif]-->
+	<link rel="stylesheet" href="css/L.Control.Zoomslider.css" />
+	<link rel="stylesheet" href="css/leaflet-search.css" />
+	<link rel="stylesheet" href="css/Control.MiniMap.css" />
+	<link rel="stylesheet" href="css/L.Control.MousePosition.css" />
+	<link rel="stylesheet" href="css/rose.css" />
+	<link rel="stylesheet" href="css/infoPanel.css" />
+	<link rel="stylesheet" href="css/Legend.css" />
+</head>
+<body>
+	<div id="map" style="width: 1400px; height: 850px"></div>
+	<script src="js/leaflet.js"></script>
+	<script src="js/L.Control.Pan.js" ></script>
+	<script src="js/L.Control.Zoomslider.js" ></script>
+	<script src="js/leaflet-search.js"></script>
+	<script src="js/Control.MiniMap.js"></script>
+	<script src="js/L.Control.MousePosition.js"></script>
+	<script src="js/rose.js"></script>
+	<script src="js/infoPanel.js"></script>
+	<script src="js/Legend.js"></script>
+	<script>
+
+		var southWest = new L.LatLng(50, 60); 
+		var northEast = new L.LatLng(60, 100); 
+		var restrictBounds = new L.LatLngBounds(southWest, northEast); 
+		
+		var map = L.map('map', {mapOptions: {zoomControl: false, panControl: false}}).setView([55, 80], 7);
+		map.setMaxBounds(restrictBounds);
+
+		var nsk = new L.tileLayer('images/nso_color/{z}/{x}/{y}.png', {
+			minZoom: 7,
+			maxZoom: 11,
+			attribution: '2013 г.',
+			tms: true
+		}).addTo(map);
+		
+		var popup = L.popup();
+
+		//function onMapClick(e) {
+		//	popup
+		//		.setLatLng(e.latlng)
+		//		.setContent("You clicked the map at " + e.latlng.toString())
+		//		.openOn(map);
+		//}
+		//map.on('click', onMapClick);
+		
+		L.control.mousePosition().addTo(map);
+		
+		var infoPanel = new infoPanel();
+		map.addControl(infoPanel);
+		
+		var InfoCustomMarker = L.Marker.extend({
+			bindPopupKolonii: function(htmlContent, text2, text3, text4, text5, text6, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateKolonii(htmlContent, text2, text3, text4, text5, text6);
+				}, this);
+			},
+			bindPopupAdministracii: function(htmlContent, text2, text3, text4, text5, text6, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateAdministracii(htmlContent, text2, text3, text4, text5, text6);
+				}, this);
+			},
+			bindPopupSizo: function(htmlContent, text2, text3, text4, text5, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateSizo(htmlContent, text2, text3, text4, text5);
+				}, this);
+			},
+			bindPopupPolice: function(htmlContent, text2, text3, text4, text5, text6, text7, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdatePolice(htmlContent, text2, text3, text4, text5, text6, text7);
+				}, this);
+			},
+			bindPopupDomrebenka: function(htmlContent, text2, text3, text4, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateDomrebenka(htmlContent, text2, text3, text4);
+				}, this);
+			},
+			bindPopupDomstarih: function(htmlContent, text2, text3, text4, text5, text6, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdatePolice(htmlContent, text2, text3, text4, text5, text6);
+				}, this);
+			},
+			bindPopupDetdom: function(htmlContent, text2, text3, text4, text5, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateDetdom(htmlContent, text2, text3, text4, text5);
+				}, this);
+			},
+			bindPopupSudi: function(htmlContent, text2, text3, text4, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateSudi(htmlContent, text2, text3, text4);
+				}, this);
+			},
+			bindPopupProkuraturi: function(htmlContent, text2, text3, text4, text5, text6, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateProkuraturi(htmlContent, text2, text3, text4, text5, text6);
+				}, this);
+			},
+			bindPopupVoenkomati: function(htmlContent, text2, text3, text4, text5, text6, options) {
+				this.on("click", function(e) {
+				map.setView([e.latlng.lat, e.latlng.lng], 10);
+				infoPanel.onUpdateVoenkomati(htmlContent, text2, text3, text4, text5, text6);
+				}, this);
+			},
+			_getParent: function(element, className) {
+				var parent = element.parentNode;
+				while (parent != null) {
+				if (parent.className && L.DomUtil.hasClass(parent, className))
+				return parent;
+				parent = parent.parentNode;}
+				return false;
+			}
+		});
+		
+		var MyCustomMarker = L.Marker.extend({ 
+		bindPopup: function(htmlContent, options) {
+		if (options && options.showOnMouseOver) {
+			// call the super method
+			L.Marker.prototype.bindPopup.apply(this, [htmlContent, options]);
+			// unbind the click event
+			this.on("click", function(e) {
+			map.setView([e.latlng.lat, e.latlng.lng], 10);
+			}, this);
+			// bind to mouse over
+			this.on("mouseover", function(e) {
+				// get the element that the mouse hovered onto
+				var target = e.originalEvent.fromElement || e.originalEvent.relatedTarget;
+				var parent = this._getParent(target, "leaflet-popup");
+				// check to see if the element is a popup, and if it is this marker&#39;s popup
+				if (parent == this._popup._container)
+					return true;
+				// show the popup
+				this.openPopup();
+			}, this);
+			// and mouse out
+			this.on("mouseout", function(e) {
+				// get the element that the mouse hovered onto
+				var target = e.originalEvent.toElement || e.originalEvent.relatedTarget;
+				// check to see if the element is a popup
+				if (this._getParent(target, "leaflet-popup")) {
+					L.DomEvent.on(this._popup._container, "mouseout", this._popupMouseOut, this);
+					return true;
+				}
+				// hide the popup
+				this.closePopup();
+			}, this);
+		}
+	},
+	_popupMouseOut: function(e) {
+		// detach the event
+		L.DomEvent.off(this._popup, "mouseout", this._popupMouseOut, this);
+		// get the element that the mouse hovered onto
+		var target = e.toElement || e.relatedTarget;
+		// check to see if the element is a popup
+		if (this._getParent(target, "leaflet-popup"))
+			return true;
+		// check to see if the marker was hovered back onto
+		if (target == this._icon)
+			return true;
+		// hide the popup
+		this.closePopup();
+	},
+	_getParent: function(element, className) {
+		var parent = element.parentNode;
+		while (parent != null) {
+			if (parent.className && L.DomUtil.hasClass(parent, className))
+				return parent;
+			parent = parent.parentNode;
+		}
+		return false;
+	}
+	});
+		
+	map.addControl(new rose());
+	map.addControl(new legend());
+		
+		var data = [
+		{"loc":[55.50686,78.29407], "objname":"Куйбышев"},
+		{"loc":[55.10352,82.87262], "objname":"Новосибирск"},
+		{"loc":[54.37216,83.31894], "objname":"Линево"},
+		{"loc":[55.06382,83.13698], "objname":"Раздольное"},
+		{"loc":[55.19808,79.58290], "objname":"Раисино"},
+		{"loc":[55.17103,84.43680], "objname":"Тогучин"},
+		{"loc":[54.92399,76.34674], "objname":"Тобулга"},	
+		{"loc":[55.13140,83.90121], "objname":"Горный"},
+		{"loc":[54.52507,79.78340], "objname":"Баган"},
+		{"loc":[54.93267,83.18710], "objname":"Барышево"},
+		{"loc":[55.33422,82.72568], "objname":"Колывань"},
+		{"loc":[55.31977,78.36548], "objname":"Барабинск"},
+		{"loc":[54.79435,83.12256], "objname":"Бердск"},	
+		{"loc":[55.64350,84.42719], "objname":"Болотное"},
+		{"loc":[55.69849,76.78688], "objname":"Венгерово"},
+		{"loc":[54.87977,82.78473], "objname":"Верх-Тула"},
+		{"loc":[54.51271,79.68384], "objname":"Довольное"},
+		{"loc":[54.35736,83.31894], "objname":"Дорогино"},
+		{"loc":[54.71391,78.66692], "objname":"Здвинск"},
+		{"loc":[55.29671,82.89116], "objname":"Зеленый Мыс"},
+		{"loc":[54.64126,83.33267], "objname":"Искитим"},
+		{"loc":[53.74465,78.07022], "objname":"Карасук"},
+		{"loc":[55.15769,80.29221], "objname":"Каргат"},
+		{"loc":[55.04140,82.21619], "objname":"Коченево"},
+		{"loc":[54.34295,80.47485], "objname":"Кочки"},
+		{"loc":[56.43593,79.09195], "objname":"Коб-Кордон"},
+		{"loc":[53.99526,79.24988], "objname":"Красноозерское"},
+		{"loc":[54.37656,77.29431], "objname":"Купино"},
+		{"loc":[56.57878,76.62895], "objname":"Кыштовка"},
+		{"loc":[55.04534,81.06743], "objname":"Новоиткульское"},
+		{"loc":[54.36816,84.21913], "objname":"Маслянино"},
+		{"loc":[55.30726,83.61214], "objname":"Мошково"},
+		{"loc":[55.00322,82.73529], "objname":"Обь"},
+		{"loc":[55.54456,83.85178], "objname":"Ояш"},
+		{"loc":[54.37616,81.89278], "objname":"Ордынское"},
+		{"loc":[56.36069,78.36891], "objname":"Северное"},
+		{"loc":[55.11098,80.96443], "objname":"Чулым"},
+		{"loc":[53.80106,82.30614], "objname":"Сузун"},
+		{"loc":[55.21022,76.05835], "objname":"Татарск"},
+		{"loc":[55.31352,79.67972], "objname":"Убинское"},
+		{"loc":[55.57718,75.69031], "objname":"Усть-Тарка"},
+		{"loc":[55.32133,76.76765], "objname":"Чаны"},
+		{"loc":[54.22952,83.44666], "objname":"Черепаново"},
+		{"loc":[54.72224,76.58569], "objname":"Чистоозерное"}
+		];
+		
+		var kolonii = [
+		{"loc":[55.48547,78.29063], "objname":"г.Куйбышев", "koloniiName":"СИЗО-2 ГУФСИН России по Новосибирской области", "koloniiAddress":"632387, Новосибирская область, г.Куйбышев, ул.Агафонова,35", "koloniiPhone":"(38362) 23-086", "koloniiBoss":"Пушкарев Игорь Борисович", "koloniiBossPhone":"(38362)51-268,23-588"},
+		{"loc":[55.45939,78.21854], "objname":"г.Куйбышев", "koloniiName":"ИК-12 ГУФСИН России по Новосибирской области", "koloniiAddress":"632387, Новосибирская область, г. Куйбышев", "koloniiPhone":"(38362) 53-419", "koloniiBoss":"Денисов Андрей Алексеевич", "koloniiBossPhone":"(38362) 23-365"},
+		{"loc":[55.02566,82.98248], "objname":"Новосибирск", "koloniiName":"СИЗО-1 ГУФСИН России по Новосибирской области", "koloniiAddress":"630010, г. Новосибирск, ул.Караваева,1", "koloniiPhone":"240-04-05", "koloniiBoss":"Робакидзе Руслан Карлович", "koloniiBossPhone":"240-04-80"},
+		{"loc":[55.06815,82.93991], "objname":"Новосибирск", "koloniiName":"ИК-2 ГУФСИН России по Новосибирской области", "koloniiAddress":"630052, г. Новосибирск, ул.Толмачевская,31", "koloniiPhone":"303-19-83", "koloniiBoss":"Кузьмин Юрий Александрович", "koloniiBossPhone":"303-19-74"},
+		{"loc":[55.03274,82.88773], "objname":"Новосибирск", "koloniiName":"ИК-3 ГУФСИН России по Новосибирской области", "koloniiAddress":"630097, г. Новосибирск,ул.Звездная,34", "koloniiPhone":"337-77-14", "koloniiBoss":"Киселев Игорь Викторович", "koloniiBossPhone":"338-04-60"},
+		{"loc":[54.98392,83.02505], "objname":"Новосибирск", "koloniiName":"ИК-8 ГУФСИН России по Новосибирской области", "koloniiAddress":"630027, г. Новосибирск, ул. Б.Хмельницкого, 116/2", "koloniiPhone":"274-04-51", "koloniiBoss":"Цильке Арвит Райнгартович", "koloniiBossPhone":"274-41-51"},
+		{"loc":[54.96421,82.92480], "objname":"Новосибирск", "koloniiName":"Новосибирская ВК ГУФСИН России по Новосибирской области", "koloniiAddress":"630039, г. Новосибирск, а/я 139", "koloniiPhone":"240-27-48 (факс)", "koloniiBoss":"Усольцев Сергей Анатольевич", "koloniiBossPhone":"240-27-16"},
+		{"loc":[54.95869,82.86026], "objname":"Новосибирск", "koloniiName":"ИК-18 ГУФСИН России по Новосибирской области", "koloniiAddress":"630114, г. Новосибирск, ул. Ключ-Камышенское плато, 6/3", "koloniiPhone":"338-09-10 (факс)", "koloniiBoss":"Чернышов Александр Александрович", "koloniiBossPhone":"338-07-07"},
+		{"loc":[54.37576,83.35602], "objname":"Линево", "koloniiName":"СИЗО-3 ГУФСИН России по Новосибирской области", "koloniiAddress":"633216, Новосибирская область, Искитимский район, р.п.Линево, ул.Листвянская,3", "koloniiPhone":"(38343) 31-165", "koloniiBoss":"Новиков Игорь Алексеевич", "koloniiBossPhone":"(38343)31-322,41-596"},
+		{"loc":[55.05950,83.15552], "objname":"c.Раздольное", "koloniiName":"ЛИУ-10 ГУФСИН России по Новосибирской области", "koloniiAddress":"630010, г. Новосибирск, с. Раздольное", "koloniiPhone":"240-27-49", "koloniiBoss":"Аскеров Фаик Агамоглан-Оглы", "koloniiBossPhone":"240-27-35"},
+		{"loc":[55.04376,83.13354], "objname":"п/о Раздольное", "koloniiName":"ИК-9 ГУФСИН России по Новосибирской области", "koloniiAddress":"630550, г. Новосибирск, п/о Раздольное", "koloniiPhone":"240-27-15", "koloniiBoss":"Быргазов Анатолий Александрович", "koloniiBossPhone":"240-27-42"},
+		{"loc":[55.18514,79.57123], "objname":"Раисино", "koloniiName":"ИК-13 ГУФСИН России по Новосибирской области", "koloniiAddress":"632522, Новосибирская область, Убинский район, с. Раисино", "koloniiPhone":"(38366) 26-131", "koloniiBoss":"Сиротин Сергей Петрович ", "koloniiBossPhone":"(38366) 26-144"},
+		{"loc":[55.20552,84.42719], "objname":"Тогучин", "koloniiName":"ИК-14 ГУФСИН России по Новосибирской области", "koloniiAddress":"633454, Новосибирская область, Тогучинский район, г. Тогучин, ул. Блюхера, 2а", "koloniiPhone":"(38340) 21-740", "koloniiBoss":"Кайль Владимир Фридрихович", "koloniiBossPhone":"(38340) 22-320"},
+		{"loc":[54.92556,76.34811], "objname":"Тобулга", "koloniiName":"ИК-15 ГУФСИН России по Новосибирской области", "koloniiAddress":"632710, Новосибирская область, Чистоозерный район, п. Табулга", "koloniiPhone":"(38368) 93-625, 93-647", "koloniiBoss":"Доценко Владимир Викторович ", "koloniiBossPhone":"(38368) 93-746"},
+		{"loc":[55.13100,83.93005], "objname":"Горный", "koloniiName":"ИК-21 ГУФСИН России по Новосибирской области", "koloniiAddress":"633411, Новосибирская область, Тогучинский район, п. Горный, ул. Воинская, 1.", "koloniiPhone":"(38340) 23-543 (факс)", "koloniiBoss":"Чушев Дмитрий Геннадьевич", "koloniiBossPhone":"(38340) 23-539"},
+		{"loc":[55.32368,82.72156], "objname":"Колывань", "koloniiName":"ИК-22 ГУФСИН России по Новосибирской области", "koloniiAddress":"633160, Новосибирская область, р.п. Колывань, ул. Гагарина, 9", "koloniiPhone":"(38352) 53-724 (факс)", "koloniiBoss":"Кузьмин Константин Николаевич", "koloniiBossPhone":"(38352) 52-519"}
+		];
+		
+		var domrebenka = [
+		{"loc":[54.97288,82.89253], "objname":"г. Новосибирск", "domrebenkaName":"Дом ребенка № 1", "domrebenkaAddress":"ул. Саввы Кожевникова, 31", "domrebenkaPhone":"347-48-53"},
+		{"loc":[54.97722,82.83073], "objname":"г. Новосибирск", "domrebenkaName":"Психоневрологический Дом ребенка № 2", "domrebenkaAddress":"ул. Кропоткина, 269/2", "domrebenkaPhone":"273-47-20"},
+		{"loc":[55.05006,82.86438], "objname":"г. Новосибирск", "domrebenkaName":"Специализированный психоневрологический Дом ребенка № 3", "domrebenkaAddress":"ул. Невельского, 83/1", "domrebenkaPhone":"341-24-87"}
+		];
+		
+		var sizo = [
+		{"loc":[55.03825,83.00858], "objname":"г. Новосибирск", "sizoName":"ФКУ СИЗО-1 УФСИН России по Новосибирской области", "sizoAddress":"630010, г.Новосибирск, ул.Караваева,1", "sizoPhone":"+7 (383) 240-04-05", "sizoBoss":"Робакидзе Руслан Карлович"},
+		{"loc":[55.45161,78.29613], "objname":"г. Куйбышев", "sizoName":"ФКУ СИЗО-2 УФСИН России по Новосибирской области", "sizoAddress":"632387,Новосибирская область, г.Куйбышев, ул.Агафонова,35", "sizoPhone":"+7 (38362) 23-086", "sizoBoss":"Пушкарев Игорь Борисович"},
+		{"loc":[54.37856,83.32718], "objname":"р.п.Линево", "sizoName":"ФКУ СИЗО-3 УФСИН России по Новосибирской области", "sizoAddress":"633216,Новосибирская область, Искитимский район, р.п.Линево, ул.Листвянская,3", "sizoPhone":"+7 (38343) 31-165", "sizoBoss":"Новиков Игорь Алексеевич"}
+		];
+		
+		var domstarih = [
+		{"loc":[55.29671,82.89116], "objname":"пос. Зеленый Мыс", "domstarihName":"Бибихинский Специальный Дом-Интернат Для Престарелых И Инвалидов", "domstarihAddress":"630516, Новосибирская обл., Новосибирский р-н, пос. Зеленый Мыс, Береговая ул., 14", "domstarihPhone":"(383) 295-67-70", "domstarihFaks":"(383) 295-67-71", "domstarihMail":"direktorbsdi@mail.ru"},
+		{"loc":[55.68068,84.39491], "objname":"г. Болотное", "domstarihName":"Болотнинский Дом Ветеранов", "domstarihAddress":"633350, Новосибирская обл., г. Болотное, Горького ул., 4", "domstarihPhone":"+7 (38349) 21 996", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.65086,84.40865], "objname":"г. Болотное", "domstarihName":"Болотнинский Психоневрологический Интернат", "domstarihAddress":"633340, Новосибирская обл., г. Болотное, Промышленная ул., 37", "domstarihPhone":"(383) 49-225-80", "domstarihFaks":"(383) 49-210-59", "domstarihMail":"bpni@mail.ru"},
+		{"loc":[54.95239,82.91107], "objname":"г. Новосибирск", "domstarihName":"Городской Дом Ветеранов", "domstarihAddress":"г. Новосибирск, Промышленная ул., 1", "domstarihPhone":"+7 (383) 279 7395", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.01149,82.81288], "objname":"г. Новосибирск", "domstarihName":"Дом Ветеранов", "domstarihAddress":"г. Новосибирск, Жуковского ул., 98", "domstarihPhone":"(383) 225-39-81", "domstarihFaks":"(383) 22-68-777", "domstarihMail":"ndv_@mail.ru"},
+		{"loc":[55.00479,82.93991], "objname":"г. Новосибирск", "domstarihName":"Областной Дом Милосердия", "domstarihAddress":"630071, г. Новосибирск, Порядковый 2-й пер., 10а", "domstarihPhone":"(383) 341-47-10", "domstarihFaks":"(383) 341-34-75", "domstarihMail":"dommiloserdiya@inbox.ru"},
+		{"loc":[55.04534,82.97287], "objname":"г. Новосибирск", "domstarihName":"Поколение, Новосибирский Центр Поддержки Пожилых Людей", "domstarihAddress":"630007, г. Новосибирск, Серебренниковская ул., 19", "domstarihPhone":"(383) 214-39-40", "domstarihFaks":"(383) 363-27-96", "domstarihMail":""},
+		{"loc":[55.0878,82.92068], "objname":"г. Новосибирск", "domstarihName":"Специализированный Дом Для Одиноких Престарелых", "domstarihAddress":"г. Новосибирск, Максима Горького ул., 91", "domstarihPhone":"+7 (383) 210 3886", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.20866,75.96016], "objname":"г. Татарск", "domstarihName":"Жилье Социального Использования, Ветеранский Дом", "domstarihAddress":"632121, Новосибирская обл., г. Татарск, ул. Закриевского, 42", "domstarihPhone":"+7 (38364) 21 886", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.21453,76.01372], "objname":"г. Татарск", "domstarihName":"Татарский Дом Престарелых", "domstarihAddress":"632121, Новосибирская обл., г. Татарск, Матросова ул., 191", "domstarihPhone":"+7 (38364) 63 731", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[53.715,78.05649], "objname":"г. Карасук", "domstarihName":"Карасукский Специализированный Дом Для Одиноких Престарелых", "domstarihAddress":"632860, Новосибирская обл., г. Карасук, Целинная ул., 4", "domstarihPhone":"+7 (38355) 31 132", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.3186,82.70576], "objname":"р.п. Колывань", "domstarihName":"Колыванский Дом Ветеранов", "domstarihAddress":"633162, Новосибирская обл., Колыванский р-н, рп Колывань, Овчинникова ул., 77", "domstarihPhone":"+7 (38352) 51 288", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[54.38496,77.30392], "objname":"г. Купино", "domstarihName":"Купинский Дом-Интернат", "domstarihAddress":"632735, Новосибирская обл., г. Купино, Железнодорожная ул., 42а", "domstarihPhone":"+7 (38358) 28 084", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[54.9717,82.74834], "objname":"г. Обь", "domstarihName":"Обской Пансионат Для Престарелых Инвалидов", "domstarihAddress":"Новосибирская обл., г. Обь, ул. Толстого, 66", "domstarihPhone":"+7 (38373) 50 946", "domstarihFaks":"", "domstarihMail":"pansionat.ob@bk.ru"},
+		{"loc":[54.37256,81.88179], "objname":"р.п. Ордынское", "domstarihName":"Ордынский Дом Ветеранов", "domstarihAddress":"633261, Новосибирская обл., Ордынский р-н, рп Ордынское, пр. Революции, 1", "domstarihPhone":"+7 (38359) 21 306", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[53.78078,82.32468], "objname":"р.п. Сузун", "domstarihName":"Сузунский Дом Милосердия", "domstarihAddress":"633623, Новосибирская обл., Сузунский р-н, рп Сузун, Калинина ул., 100", "domstarihPhone":"+7 (38346) 21 027", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.24508,84.38599], "objname":"г. Тогучин", "domstarihName":"Тогучинский Психоневрологический Интернат", "domstarihAddress":"633453, Новосибирская обл., г. Тогучин, Линейная ул., 18", "domstarihPhone":"8 (383 40) 28 966", "domstarihFaks":"8 (383 40) 22 573", "domstarihMail":"tpni07@sznsk.ru"},
+		{"loc":[55.55583,75.71915], "objname":"с. Усть-Тарка", "domstarihName":"Усть-Таркский Дом Ветеранов Труда", "domstarihAddress":"632160, Новосибирская обл., Усть-Таркский р-н, с. Усть-Тарка, Транспортная ул., 6", "domstarihPhone":"+7 (38372) 22 312", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[54.20703,83.40134], "objname":"г. Черепаново", "domstarihName":"Черепановский Дом-Интернат Для Престарелых Граждан И Инвалидов", "domstarihAddress":"633520, Новосибирская обл., г. Черепаново, Кирова ул., 1а", "domstarihPhone":"+7 (38345) 63 290", "domstarihFaks":"", "domstarihMail":""},
+		{"loc":[55.08269,80.98366], "objname":"г. Чулым", "domstarihName":"Чулымский Дом-Интернат Для Престарелых И Инвалидов", "domstarihAddress":"632552, Новосибирская обл., г. Чулым, Семафорная ул., 1а", "domstarihPhone":"(383 50) 22-831", "domstarihFaks":"(383 50) 21-616", "domstarihMail":"chulinternat@mail.ru"},
+		{"loc":[55.11491,80.98434], "objname":"г. Чулым", "domstarihName":"Чулымский Специализированный Дом Для Одиноких Престарелых", "domstarihAddress":"632551, Новосибирская обл., г. Чулым, 50 лет Победы ул., 1", "domstarihPhone":"+7 (38350) 38 260", "domstarihFaks":"", "domstarihMail":""}
+		];
+		
+		var police = [
+		{"loc":[54.74246,83.05595], "objname":"г. Бердск", "policeName":"Отдел МВД России по г. Бердску ", "policeAddress":"633003, Новосибирская область, г. Бердск, ул. Пушкина, 35", "policePhone":"8(383-41) 3-00-23", "policePhone2":"8-383-41-3-06-57", "policeBoss":"подполковник полиции Илья Николаевич Шипицын", "policeSite":"http://mvd.berdsk-online.ru/"},
+		{"loc":[54.63411,83.3519], "objname":"г. Искитим", "policeName":"Межмуниципальный отдел МВД России «Искитимский» ", "policeAddress":"633209, Новосибирская область, г. Искитим, ул. Пушкина, 53", "policePhone":"8(383-43) 2-98-61", "policePhone2":"8(383) 2-95-25", "policeBoss":"полковник полиции Константин Геннадьевич Поморцев", "policeSite":"http://www.admiskitim.ru/mvd/mvd.html"},
+		{"loc":[55.34242,78.36205], "objname":"г. Барабинск", "policeName":"Межмуниципальный отдел МВД России «Барабинский» ", "policeAddress":"632331, Новосибирская область, г. Барабинск, пер. Л. Толстого, 20", "policePhone":"8 (383-61) 220-00", "policePhone2":"8(383-61) 238-71", "policeBoss":"подполковник полиции Валерий Анатольевич Тайлаков", "policeSite":"http://www.admbaraba.ru/category/mezhmunicipalnyj-otdel-mvd-rossii-barabinskij"},
+		{"loc":[54.70161,78.66898], "objname":"с. Здвинск", "policeName":"Отделение полиции «Здвинское» Межмуниципального отдела МВД России «Барабинский»", "policeAddress":"632951, Новосибирская область, с. Здвинск, ул. М. Горького, 54", "policePhone":"8 (383-63) 21 438", "policePhone2":"8 (383-63) 21 398", "policeBoss":"подполковник полиции  Кирилл Васильевич Нехаенко", "policeSite":"http://zdvinsk.nso.ru/other/Pages/Отделение-полиции-Здвинского-района-Новосибирской-области.aspx"},
+		{"loc":[55.66597,84.4059], "objname":"г. Болотное", "policeName":"Отдел МВД России по Болотнинскому району ", "policeAddress":"633344, Новосибирская область, г. Болотное, ул. Московская, 60", "policePhone":"8 (383-49) 22-514", "policePhone2":"8(383-49) 21-067", "policeBoss":"полковник полиции Александр Иванович Барсук", "policeSite":"http://www.bovd.ru/"},
+		{"loc":[55.69036,76.7807], "objname":"с. Венгерово", "policeName":"Межмуниципальный отдел МВД России «Венгеровский» ", "policeAddress":"632241, Новосибирская область, с. Венгерово, ул. Ленина, 74 ", "policePhone":" 8(383-69)21-294", "policePhone2":"8 (383-69) 21-194", "policeBoss":"подполковник полиции Сергей Леонидович Павличенко", "policeSite":"http://www.vengerovo.nso.ru/Учреждения/Межмуниципальный%20отдел%20МВД%20России%20«Венгеровский»/Pages/default.aspx"},
+		{"loc":[53.72475,78.09631], "objname":"г. Карасук", "policeName":"Межмуниципальный отдел МВД России «Карасукский» ", "policeAddress":"632810, Новосибирская область, г. Карасук, ул. Октябрьская,15", "policePhone":"8(383-55) 33-222", "policePhone2":"", "policeBoss":"полковник полиции Александр Александрович Никифоров", "policeSite":"http://www.adm-karasuk.ru/mvd.php"},
+		{"loc":[54.51112,79.80125], "objname":"с. Баган", "policeName":"Отделение полиции «Баганское» Межмуниципального отдела МВД России «Карасукский» ", "policeAddress":"632770, Новосибирская область, с. Баган, ул.Ленина, 53", "policePhone":"8(383-53) 21-297", "policePhone2":"8(383-53) 21-322", "policeBoss":"подполковник полиции Евгений Владимирович Захаров", "policeSite":"http://bagan.nso.ru/prochee/policiya/Pages/default.aspx"},
+		{"loc":[53.97588,79.24782], "objname":"р.п. Краснозерское", "policeName":"Межмуниципальный отдел МВД России «Краснозерский» ", "policeAddress":"639902, р.п. Краснозерское, ул. Ленина, 37", "policePhone":"8(383-57) 42-609", "policePhone2":"8(383-57) 41-550", "policeBoss":"подполковник полиции Александр Сергеевич Сукманов", "policeSite":"http://www.byte54.ru/index.php?option=com_content&view=category&layout=blog&id=37&Itemid=41"},
+		{"loc":[54.49836,79.66255], "objname":"с. Довольное", "policeName":"Отделение полиции «Доволенское» Межмуниципального отдела МВД России «Краснозерский» ", "policeAddress":"632450 Новосибирская область, с Довольное, ул. Мичурина, 14", "policePhone":"8(383-54) 22-002", "policePhone2":"8(383-54) 21-506", "policeBoss":"подполковник полиции Сергей Васильевич Борисов", "policeSite":"http://www.adm-dovolnoe.ru/pi_razdel.php?id_blok1_levelpages1=6&razdel=pi"},
+		{"loc":[55.44421,78.32703], "objname":"г. Куйбышев", "policeName":"Межмуниципальный отдел МВД России «Куйбышевский» ", "policeAddress":"632387, Новосибирская область, город Куйбышев, улица Краскома, 10", "policePhone":"8(383-62) 51-490", "policePhone2":"8 (383-62)51-286", "policeBoss":"подполковник полиции Александр Владимирович Госперский", "policeSite":"http://момвд-куйбышевский.рф/"},
+		{"loc":[55.47146,78.27072], "objname":"г. Куйбышев", "policeName":"Отделение полиции  «Северное» Межмуниципального отдела МВД России «Куйбышевский»", "policeAddress":"632080, Новосибирская область, г. Куйбышев, ул. Краскома, 10", "policePhone":"8 (383-60) 21-401", "policePhone2":"8(383-60) 21-896", "policeBoss":"подполковник полиции Андрей Валерьевич Климов", "policeSite":"http://www.severnoe-nso.ru/index107.htm"},
+		{"loc":[54.35936,77.3513], "objname":"г. Купино", "policeName":"Межмуниципальный отдел МВД России «Купинский»", "policeAddress":"632735, Новосибирская область, г. Купино, ул. Советов, 83", "policePhone":"8 (383-58) 23-213", "policePhone2":"8 (383-58) 23-214", "policeBoss":"майор полиции Николай Викторович Зобнин", "policeSite":"http://www.kupino.nso.ru/other/police/Pages/default.aspx"},
+		{"loc":[54.7032,76.56097], "objname":"р.п. Чистоозерное", "policeName":"Отделение полиции «Чистоозерное»  Межмуниципального отдела МВД России «Купинский»", "policeAddress":"632720, Новосибирская область, р.п. Чистоозерное, ул. Восточная, 10", "policePhone":"8 (383-68) 91-808", "policePhone2":"8(383- 68) 91-653", "policeBoss":"подполковник полиции Сергей Николаевич Лузин", "policeSite":"http://chistoozernoe.nso.ru/deyatelnost/otdelpol/Pages/default.aspx"},
+		{"loc":[55.28342,83.62381], "objname":"р.п. Мошково", "policeName":"Отдел МВД России по Мошковскому району", "policeAddress":"633131, Новосибирская область, р. п. Мошково,  ул. Народная, 2", "policePhone":"8 (383-48) 21-102", "policePhone2":"", "policeBoss":"подполковник полиции Борисов Андрей Григорьевич", "policeSite":"http://www.moshkovo-nso.ru/pages.php?id=police"},
+		{"loc":[55.04022,82.92892], "objname":"г. Новосибирск", "policeName":"Межмуниципальный отдел МВД России «Новосибирский»", "policeAddress":"630020 г. Новосибирск, ул. Объединения, 9", "policePhone":"8(383) 232-20-38", "policePhone2":"8 (383) 232-20-32", "policeBoss":"полковник полиции Юрий Михайлович Горчаков", "policeSite":""},
+		{"loc":[54.99849,82.73598], "objname":"г. Обь", "policeName":"Отдел полиции №1 «Обской» Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"633102, Новосибирская область, г. Обь, ул. Геодезическая, 60", "policePhone":"8(383) 232-62-40", "policePhone2":"8(383) 232-62-41", "policeBoss":"", "policeSite":""},
+		{"loc":[54.95436,83.18024], "objname":"с. Барышево", "policeName":"Отдел полиции №2 «Барышевский» Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"630554, Новосибирская область, Новосибирский район, с. Барышево, переулок Институтский д.1-а", "policePhone":"8(383) 293-62-25", "policePhone2":"8(383)293-62-90", "policeBoss":"", "policeSite":""},
+		{"loc":[54.87898,82.7758], "objname":"с. Верх-Тула", "policeName":"Отдел полиции №3 «Верх-Тулинский» Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"630520, Новосибирская область, Новосибирский район, с. Верх-Тула, ул. Новая, д.4", "policePhone":"8(383) 293-32-02", "policePhone2":"8(383) 293-33-46", "policeBoss":"", "policeSite":""},
+		{"loc":[54.91057,82.99278], "objname":"п. Краснообск", "policeName":"Отдел полиции №4 «Краснообский» Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"630501, Новосибирская область, Новосибирский район, поселок Краснообск, Инженерный корпус, 1/6", "policePhone":"8(383) 308-81-81", "policePhone2":"8(383) 308-81-81", "policeBoss":"", "policeSite":""},
+		{"loc":[55.08466,82.6577], "objname":"с. Криводановка", "policeName":"Отделение полиции №5 «Криводановское»Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"630511, Новосибирская область, Новосибирский район, с. Криводановка, ул. Советская, д.20-а", "policePhone":"8(383)297-27-66", "policePhone2":"8(383)297-19-11", "policeBoss":"", "policeSite":""},
+		{"loc":[55.06343,83.13217], "objname":"с. Раздольное", "policeName":"Отделение полиции №6 «Раздольненское»Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"630550, Новосибирская область, Новосибирский район, с. Раздольное, ул.Октябрьская, д.11-а", "policePhone":"8(383) 294-15-41", "policePhone2":"8(383) 294-15-81", "policeBoss":"", "policeSite":""},
+		{"loc":[55.13885,82.9715], "objname":"п. Садовый", "policeName":"Отделение полиции № 7 «Краснояровское»Межмуниципального отдела МВД России «Новосибирский»", "policeAddress":"630531, Новосибирская область, Новосибирский район,  п. Садовый, ул.Магистральная, д.32", "policePhone":"8(383)295-30-30", "policePhone2":"8(383) 295-30-33", "policeBoss":"", "policeSite":""},
+		{"loc":[55.19572,80.26405], "objname":"г. Каргат", "policeName":"Межмуниципальный отдел МВД России «Каргатский»", "policeAddress":"632402, Новосибирская область, город Каргат, ул. Ленина, 6", "policePhone":"8(383-65) 23-425", "policePhone2":"8(383-65) 21-374", "policeBoss":"полковник полиции Геннадий Владимирович Садовский", "policeSite":"http://www.kargatskiy.ru/strukturamvd"},
+		{"loc":[55.28772,79.67079], "objname":"с. Убинское", "policeName":"Отделение полиции «Убинское» Межмуниципального отдела МВД России «Каргатский»", "policeAddress":"632520, Новосибирская область, с. Убинское, ул. Ленина, 23", "policePhone":"8(383-66) 21-461", "policePhone2":"8(383-66) 21- 244", "policeBoss":"", "policeSite":""},
+		{"loc":[55.29437,82.73117], "objname":"р.п. Колывань", "policeName":"Отдел МВД России по Колыванскому району", "policeAddress":"633160, Новосибирская область, р.п.  Колывань, ул. М.Горького,69", "policePhone":"8(383-52) 51-553", "policePhone2":"", "policeBoss":"полковник полиции Игорь Валерьевич Мухортов", "policeSite":"http://www.koluvan.ru/index.php?option=com_content&view=article&id=1046&Itemid=173"},
+		{"loc":[55.02409,82.22717], "objname":"р.п. Коченево", "policeName":"Отдел МВД России по Коченевскому району", "policeAddress":"632640, Новосибирская область, р.п. Коченево, ул.Кооперативная, 1", "policePhone":"8 (383-51) 2-35-00", "policePhone2":"8(383-51)2-35-75", "policeBoss":"подполковник полиции Николай Петрович  Новиков", "policeSite":"http://kochenevo.nso.ru/Федерал%20органы/ОВД/Pages/default.aspx"},
+		{"loc":[54.32894,84.21638], "objname":"р.п. Маслянино", "policeName":"Отдел МВД России по Маслянинскому району", "policeAddress":"Новосибирская область, Маслянинский район, р.п. Маслянино, ул. Коммунистическая 2 «в»", "policePhone":"8 (383-47) 21-102", "policePhone2":"8 (383-47) 23-404", "policeBoss":"подполковник полиции Михаил Алексеевич Рахманов", "policeSite":"http://maslyanino.nso.ru/other/mvd/Pages/docs_mvd.aspx"},
+		{"loc":[54.37016,81.92368], "objname":"р.п. Ордынское", "policeName":"Межмуниципальный отдел МВД России «Ордынский»", "policeAddress":"633261, Новосибирская область, Ордынский район, р.п. Ордынское, пр. Революции 19", "policePhone":"8(383-59) 232 02", "policePhone2":"8(383-59) 214 84", "policeBoss":"полковник полиции Эдуард Павлович Хмельков", "policeSite":"http://police.ordynsk-r.ru/"},
+		{"loc":[54.33975,80.50507], "objname":"с. Кочки", "policeName":"Отделение полиции с. Кочки Межмуниципального отдела МВД России «Ордынский»", "policeAddress":"632491, Новосибирская область, Кочковский район, с. Кочки ул. Советская, 7", "policePhone":"8(383-59) 222 79", "policePhone2":"8 (383-56) 223 32", "policeBoss":"подполковник полиции Сергей Васильевич Пирский", "policeSite":""},
+		{"loc":[53.79173,82.32742], "objname":"р.п. Сузун", "policeName":"Отдел МВД России по Сузунскому району", "policeAddress":"633623, Новосибирская область, р.п. Сузун, ул. Ленина, 60", "policePhone":"8 (383-46) 22 927", "policePhone2":"8 (383-46) 22 876", "policeBoss":"подполковник полиции Евгений Александрович Лейман", "policeSite":"http://suzun.nso.ru/Gosctruktury/MVD/Pages/default.aspx "},
+		{"loc":[55.22276,75.9787], "objname":"г. Татарск", "policeName":"Межмуниципальный отдел МВД России «Татарский»", "policeAddress":"632122, Новосибирская область, г. Татарск, ул. Закриевского, 47", "policePhone":"8 (383-64) 210 10", "policePhone2":"", "policeBoss":"подполковник полиции Сергей Федорович Кузьмич", "policeSite":"http://www.regiontatarsk.ru/police.php"},
+		{"loc":[55.5733,75.68481], "objname":"с. Усть-Тарка", "policeName":"Отделение полиции «Усть-Таркское» Межмуниципального отдела МВД России «Татарский»", "policeAddress":"632160, Новосибирская область, с. Усть-Тарка ул. Комсомольская,31", "policePhone":"8(383-72) 232-81-62", "policePhone2":"", "policeBoss":"майор полиции Виталий Николаевич Сороквашин", "policeSite":"http://www.ust-tarka-raion.obl-nso.ru/"},
+		{"loc":[55.23959,84.40865], "objname":"г. Тогучин", "policeName":"Отдел МВД России по Тогучинскому району", "policeAddress":"633456, Новосибирская область, г. Тогучин ул. Садовая, 10", "policePhone":"8 (383-40) 21 178", "policePhone2":"8 (383-40) 22 198", "policeBoss":"подполковник полиции Алексей Владимирович Пфаф", "policeSite":"http://tovd.ru/"},
+		{"loc":[55.30922,76.78894], "objname":"р.п. Чаны", "policeName":"Отдел МВД России по Чановскому району", "policeAddress":"632201, Новосибирская область, р.п. Чаны, улица Победы, 113", "policePhone":"8(383-67)21 679", "policePhone2":"8 (383-67) 21 271", "policeBoss":"подполковник полиции Владимир Васильевич Соколов", "policeSite":"http://ovdchany.my1.ru/"},
+		{"loc":[54.22791,83.39447], "objname":"г. Черепаново", "policeName":"Отдел МВД России по Черепановскому району", "policeAddress":"633520, Новосибирская область, г. Черепаново, ул. Партизанская,  25", "policePhone":"8(383-45) 210 02", "policePhone2":"8(383-45) 218-51", "policeBoss":"полковник полиции Андрей Александрович Борисов", "policeSite":"http://ovd-cherepanovo.ru/"},
+		{"loc":[55.10352,80.96031], "objname":"г. Чулым", "policeName":"Отдел МВД России по Чулымскому району", "policeAddress":"632551, Новосибирская область, г. Чулым, ул. Кожемякина, 93", "policePhone":"8 (383-50) 52 233", "policePhone2":"8 (383-50) 21 360", "policeBoss":"полковник полиции Исрапил Бетирсолтанович Хадисов", "policeSite":"http://adm-chulim.ru/index.pxp?dn=mvd"}
+		];
+		
+		var detdom = [
+		{"loc":[54.93622,83.18092], "objname":"с. Барышево", "detdomName":"Барышевский детский дом смешанный областной", "detdomAddress":"630554, Новосибирская обл., Новосибирский р-н, с. Барышево, ул. Институтская, 6", "detdomPhone":"(3832) 93 62 74", "detdomBoss":"Тимофеева Наталья Аркадьевна"},
+		{"loc":[54.35736,83.32237], "objname":"п. Дорогино", "detdomName":"Дорогинский детский дом смешанный областной", "detdomAddress":"633512, Новосибирская обл., Черепановский р-н, п. Дорогино, ул. Светлая, 23", "detdomPhone":"(38345) 7 14 30", "detdomBoss":"Эрмиш Зоя Анатольевна"},
+		{"loc":[53.72759,78.06953], "objname":"г. Карасук", "detdomName":"Карасукский детский дом", "detdomAddress":"632866, Новосибирская обл., г. Карасук, Карасукский р-н, ул. Свердлова, 101", "detdomPhone":"(38355) 3 50 88", "detdomBoss":"-"},
+		{"loc":[56.43669,79.08852], "objname":"с. Коб-Кордон", "detdomName":"Коб-Кордоновский детский дом смешанный районный", "detdomAddress":"632091, Новосибирская обл., Северный р-н, с. Коб-Кордон, ул. Зеленая, 4", "detdomPhone":"(38360) 4 27 21", "detdomBoss":"Галамаздин Петр Максимович"},
+		{"loc":[54.36576,77.31697], "objname":"г. Купино", "detdomName":"Купинский детский дом смешанный районный", "detdomAddress":"632740, Новосибирская обл., г. Купино, ул. Южная, 19", "detdomPhone":"(38358) 2 33 41", "detdomBoss":"Ковалева Валентина Дмитриевна"},
+		{"loc":[55.04534,81.06743], "objname":"с. Новоиткульское", "detdomName":"Новоиткульский детский дом", "detdomAddress":"632560, Новосибирская обл., Чулымский р-н, с. Новоиткульское", "detdomPhone":"(38350) 3 76 16", "detdomBoss":"-"},
+		{"loc":[55.09762,82.9509], "objname":"г. Новосибирск", "detdomName":"Детский дом № 1 (Кировский р-н)", "detdomAddress":"630048, Новосибирск, ул. Ватутина, 30/1", "detdomPhone":"(383) 314 45 42", "detdomBoss":"Сарапулова Татьяна Анатольевна, зам.директора по УВР - Рузич Л.Н., зам.директора по АХР - Барсукова С.И."},
+		{"loc":[55.06579,82.89803], "objname":"", "detdomName":"МОУ Детский дом № 5 (Советский р-н)", "detdomAddress":"630117, Новосибирск, ул. Российская, 3", "detdomPhone":"(3832) 32 09 43", "detdomBoss":"Антонов Сергей Михайлович"},
+		{"loc":[55.065,82.97424], "objname":"", "detdomName":"Детский дом № 6 (Ленинский р-н)", "detdomAddress":"630000, Новосибирск, ул. Выставочная, 40", "detdomPhone":"(383) 346 44 18, 346 44 09", "detdomBoss":"Кузьменко Наталья Николаевна"},
+		{"loc":[55.04966,83.02299], "objname":"", "detdomName":"Детский дом № 7", "detdomAddress":"630107, Новосибирск, ул. Связистов, 155", "detdomPhone":"(3832) 56 30 54", "detdomBoss":"Зоткевич Наталья Александровна"},
+		{"loc":[55.017,82.91176], "objname":"", "detdomName":"Детский дом № 8 (Первомайский р-н)", "detdomAddress":"630000, Новосибирск, ул. Марата, 10 ", "detdomPhone":"(3832) 38 22 71", "detdomBoss":"Воронина Валентина Александровна"},
+		{"loc":[55.01779,82.85751], "objname":"", "detdomName":"Детский дом № 9 (Дзержинский р-н)", "detdomAddress":"630015, Новосибирск, пр. Дзержинского, 2", "detdomPhone":"(3832) 79 74 84", "detdomBoss":"Заичков Николай Ильич"},
+		{"loc":[54.97564,82.99072], "objname":"", "detdomName":"Детский дом № 11 Солнышко (Октябрьский р-н)", "detdomAddress":"630033, Новосибирск, ул. Высоцкого, 29 ", "detdomPhone":"(3832) 19 79 55", "detdomBoss":"Сальникова Татьяна Васильевна, зам.директора по УВР - Завгородняя Светлана Викторовна, зам.директора по АХЧ - Митюк Юрий Михайлович"},
+		{"loc":[54.93858,82.87811], "objname":"", "detdomName":"Детский дом № 12 (Калининский р-н)", "detdomAddress":"630027, Новосибирск, ул. Макаренко, 17/1", "detdomPhone":"(3832) 72 47 77", "detdomBoss":"Молчанова Елена Петровна"},
+		{"loc":[54.9583,82.81288], "objname":"", "detdomName":"Детский дом № 13 (Ленинский р-н)", "detdomAddress":"630000, Новосибирск, ул. Курганская, 20", "detdomPhone":"(3832) 56 66 03", "detdomBoss":"Кургина Татьяна Александровна"},
+		{"loc":[54.9914,82.8067], "objname":"", "detdomName":"Санаторный детский дом № 15 Надежда", "detdomAddress":"630005, Новосибирск, ул. Гоголя, 25а", "detdomPhone":"(3832) 24 83 11", "detdomBoss":"Ростовцева Екатерина Евгеньевна, зам.директора по АХЧ - Карпова Наталья Анатольевна, зам.директора по УВР - Суханская Антонина Александровна"},
+		{"loc":[55.00479,83.04634], "objname":"", "detdomName":"ГОУ Детский дом спец.корр. для детей с отклонениями в развитии", "detdomAddress":"630129, Новосибирск, ул. Рассветная, 10/2", "detdomPhone":"(3832) 70 68 11", "detdomBoss":"Кителева Ольга Эдуардовна, зам.директора - Никитина Диана Евгеньевна, зам.директора - Данченко Маргарита Петровна"},
+		{"loc":[55.02684,82.83554], "objname":"", "detdomName":"Детский дом Приют Святого Николая", "detdomAddress":"630033, Новосибирск, ул. Саввы Кожевникова, 29", "detdomPhone":"(383) 347 55 84, 355 10 76", "detdomBoss":"Рыбус Барбара Станиславовна"},
+		{"loc":[54.99022,82.75589], "objname":"г. Обь", "detdomName":"Обской детский дом-интернат спец.корр. -ого вида", "detdomAddress":"633113, Новосибирская обл., г. Обь, ул. Калинина, 85", "detdomPhone":"(38373) 5 05 58", "detdomBoss":"Кузнецов Сергей Федорович"},
+		{"loc":[55.54689,83.8456], "objname":"п. Ояш", "detdomName":"Ояшинский детский дом-интернат спец.корр.-ого вида", "detdomAddress":"633310, Новосибирская обл., Мошковский р-н, п. Ояш, ул. Западная, 40", "detdomPhone":"(38348) 5 14 08 ", "detdomBoss":"Присмакина Любовь Николаевна"},
+		{"loc":[55.22863,84.44023], "objname":"г. Тогучин", "detdomName":"Тогучинский детский дом дошкольный", "detdomAddress":"633420, Новосибирская обл., г. Тогучин, ул. Пролетарская, 41", "detdomPhone":"(38340) 2 15 64", "detdomBoss":"Шерстнева Ольга Николаевна"},
+		{"loc":[54.21988,83.35327], "objname":"г. Черепаново", "detdomName":"Черепановский детский дом-школа № 5", "detdomAddress":"633521, Новосибирская обл., г. Черепаново, ул. Свободная, 59а", "detdomPhone":"(38345) 2 17 47", "detdomBoss":"Феоктистов Геннадий Анатольевич"},
+		{"loc":[54.72224,76.57883], "objname":"п. Чистоозерное", "detdomName":"Детский дом", "detdomAddress":"632721, Новосибирская обл., п. Чистоозерное, ул. 50 лет Октября, 67", "detdomPhone":"(38368) 9 14 52", "detdomBoss":"Хихлова Зинаида Ивановна"}
+		];
+		
+		var prokuraturi = [
+		{"loc":[54.50992,79.84039], "objname":"с. Баган", "prokuraturiName":"Баганский район", "prokuraturiAddress":"632770, НСО, с. Баган, ул. М.Горького, д. 38", "prokuraturiProkuror":"Савин Андрей Николаевич", "prokuraturiPhone":"21-639", "prokuraturiMail":"baganpro@procrf-nso.ru"},
+		{"loc":[55.32758,78.39981], "objname":"г. Барабинск", "prokuraturiName":"Барабинская межрайонная прокуратура", "prokuraturiAddress":"632334, г. Барабинск, ул. Комарова, д. 23а", "prokuraturiProkuror":"Цацура Борис Владимирович", "prokuraturiPhone":"22-292", "prokuraturiMail":"barabpro@procrf-nso.ru"},
+		{"loc":[54.77139,83.11844], "objname":"г. Бердск", "prokuraturiName":"г. Бердск", "prokuraturiAddress":"633003, НСО, г. Бердск, ул. Первомайская, д. 66", "prokuraturiProkuror":"Власов Александр Геннадьевич", "prokuraturiPhone":"31-883", "prokuraturiMail":"berdskpro@procrf-nso.ru"},
+		{"loc":[55.67758,84.42032], "objname":"г. Болотное", "prokuraturiName":"Болотнинский район", "prokuraturiAddress":"633350, НСО, г. Болотное, ул. Калинина, д. 1", "prokuraturiProkuror":"Зверева Валентина Николавена", "prokuraturiPhone":"22-346", "prokuraturiMail":"bolotpro@procrf-nso.ru"},
+		{"loc":[55.66519,76.81366], "objname":"с. Венгерово", "prokuraturiName":"Венгеровский район", "prokuraturiAddress":"632241, НСО, с. Венгерово, ул. Добролюбова, д. 3", "prokuraturiProkuror":"Бондаренко Виталий Николаевич", "prokuraturiPhone":"21-499", "prokuraturiMail":"vengerpro@procrf-nso.ru"},
+		{"loc":[54.50833,79.6701], "objname":"с. Довольное", "prokuraturiName":"Доволенский район", "prokuraturiAddress":"632451, НСО, с. Довольное, ул. Коммунальная, д. 2", "prokuraturiProkuror":"Шевкопляс Сергей Александрович", "prokuraturiPhone":"21-547", "prokuraturiMail":"dovolpro@procrf-nso.ru"},
+		{"loc":[54.71272,78.67722], "objname":"с. Здвинск", "prokuraturiName":"Здвинский район", "prokuraturiAddress":"632950, НСО, с. Здвинск, ул. К. Маркса, д. 1", "prokuraturiProkuror":"Липатов Илья Александрович", "prokuraturiPhone":"21-791", "prokuraturiMail":"zdvinpro@procrf-nso.ru"},
+		{"loc":[54.62854,83.37662], "objname":"г. Искитим", "prokuraturiName":"Искитимская межрайонная прокуратура", "prokuraturiAddress":"633210, НСО, г. Искитим, м-н Индустриальный, д. 13а", "prokuraturiProkuror":"Ситников Геннадий Владимирович", "prokuraturiPhone":"22-333", "prokuraturiMail":"iskitimpro@procrf-nso.ru"},
+		{"loc":[53.73978,78.09357], "objname":"г. Карасук", "prokuraturiName":"Карасукский район", "prokuraturiAddress":"632868, НСО, г. Карасук, ул. Октябрьская, д. 35", "prokuraturiProkuror":"Горелов Николай Николаевич", "prokuraturiPhone":"33-306", "prokuraturiMail":"karasukpro@procrf-nso.ru"},
+		{"loc":[55.1624,80.28946], "objname":"г. Каргат", "prokuraturiName":"Каргатский район", "prokuraturiAddress":"632402, НСО, г. Каргат, ул. Советская, д. 122", "prokuraturiProkuror":"Сивак Роман Андреевич", "prokuraturiPhone":"21-070", "prokuraturiMail":"kargatpro@procrf-nso.ru"},
+		{"loc":[55.33461,82.7655], "objname":"п. Колывань", "prokuraturiName":"Колыванский район", "prokuraturiAddress":"633160, НСО, р.п. Колывань, ул. Горького, д. 69", "prokuraturiProkuror":"Войтов Алексей Геннадьевич", "prokuraturiPhone":"51-441", "prokuraturiMail":"kolyvpro@procrf-nso.ru"},
+		{"loc":[55.02881,82.25052], "objname":"п. Коченево", "prokuraturiName":"Коченевский район", "prokuraturiAddress":"632644, НСО, р.п. Коченево, ул. Плахотного, д. 36", "prokuraturiProkuror":"Кузнецов Роман Васильевич", "prokuraturiPhone":"24-459", "prokuraturiMail":"kochenpro@procrf-nso.ru"},
+		{"loc":[54.35255,80.52841], "objname":"с. Кочки", "prokuraturiName":"Кочковский район", "prokuraturiAddress":"632491, НСО, с. Кочки, ул. Советская, д. 20", "prokuraturiProkuror":"Коваленко Александр Владимирович", "prokuraturiPhone":"22-106", "prokuraturiMail":"kochkipro@procrf-nso.ru"},
+		{"loc":[53.95447,79.24713], "objname":"п. Краснозерское", "prokuraturiName":"Краснозерский район", "prokuraturiAddress":"632902, НСО, р.п. Краснозерское, ул. Октябрьская, д. 31", "prokuraturiProkuror":"Пустовой Сергей Николаевич", "prokuraturiPhone":"42-102", "prokuraturiMail":"krasnpro@procrf-nso.ru"},
+		{"loc":[55.43291,78.24875], "objname":"г. Куйбышев", "prokuraturiName":"Куйбышевская межрайонная прокуратура", "prokuraturiAddress":"632352, НСО, г. Куйбышев, квартал 8, д. 9", "prokuraturiProkuror":"Стафиевский Анатолий Владимирович", "prokuraturiPhone":"64-287", "prokuraturiMail":"kujbypro@procrf-nso.ru"},
+		{"loc":[55.43057,78.35312], "objname":"", "prokuraturiName":"Куйбышевская прокуратура по надзору за соблюдением законов в исправительных учреждениях", "prokuraturiAddress":"632380, НСО, г. Куйбышев, ул. Коммунистическая, д. 42", "prokuraturiProkuror":"Кожевников Александр Владиславович", "prokuraturiPhone":"21-605", "prokuraturiMail":"kujbyiupro@procrf-nso.ru"},
+		{"loc":[54.37656,77.33139], "objname":"г. Купино", "prokuraturiName":"Купинский район", "prokuraturiAddress":"632733, НСО, г. Купино, ул. К. Маркса, д. 8а", "prokuraturiProkuror":"Вайн Алексей Иванович", "prokuraturiPhone":"21-916", "prokuraturiMail":"kupinpro@procrf-nso.ru"},
+		{"loc":[56.53374,76.6626], "objname":"с. Кыштовка", "prokuraturiName":"Кыштовский район", "prokuraturiAddress":"632270, НСО, с. Кыштовка, ул. Краснопартизанская, д. 28", "prokuraturiProkuror":"Манаков Евгений Александрович", "prokuraturiPhone":"21-455", "prokuraturiMail":"kyshtpro@procrf-nso.ru"},
+		{"loc":[54.35416,84.22325], "objname":"п. Маслянино", "prokuraturiName":"Маслянинский район", "prokuraturiAddress":"633560, НСО, р.п. Маслянино, ул. Партизанская, д. 1", "prokuraturiProkuror":"Шалимов Роман Владимирович", "prokuraturiPhone":"22-895", "prokuraturiMail":"masljapro@procrf-nso.ru"},
+		{"loc":[55.29124,83.58055], "objname":"п. Мошково", "prokuraturiName":"Мошковский район", "prokuraturiAddress":"633131, НСО, р.п. Мошково, ул. Вокзальная, д. 107", "prokuraturiProkuror":"Ашифин Константин Анатольевич", "prokuraturiPhone":"21-246", "prokuraturiMail":"moshkopro@procrf-nso.ru"},
+		{"loc":[54.98352,82.86095], "objname":"г. Новосибирск", "prokuraturiName":"Новосибирский район", "prokuraturiAddress":"630007, г. Новосибирск, ул. Сибревкома, д. 4", "prokuraturiProkuror":"Соловьева Тамара Николаевна", "prokuraturiPhone":"223-07-87", "prokuraturiMail":"novregpro@procrf-nso.ru"},
+		{"loc":[54.95515,82.96394], "objname":"", "prokuraturiName":"г. Новосибирск", "prokuraturiAddress":"630005, г. Новосибирск, ул. Некрасова, д. 80", "prokuraturiProkuror":"Мандрыко Владислав Иванович", "prokuraturiPhone":"243-50-11", "prokuraturiMail":"novcity@procrf-nso.ru"},
+		{"loc":[55.08859,82.97836], "objname":"", "prokuraturiName":"Новосибирская прокуратура по надзору за соблюдением законов в исправительных учреждениях", "prokuraturiAddress":"630015, г. Новосибирск, пр. Дзержинского, д. 5", "prokuraturiProkuror":"Рябых Александр Анатольевич", "prokuraturiPhone":"279-08-35", "prokuraturiMail":"noviu@procrf-nso.ru"},
+		{"loc":[55.00204,83.00446], "objname":"", "prokuraturiName":"Новосибирская прокуратура по надзору за исполнением законов на особо режимных объектах", "prokuraturiAddress":"630110, г. Новосибирск, ул. Народная, д. 65", "prokuraturiProkuror":"Кондратьев Юрий Павлович", "prokuraturiPhone":"271-74-40", "prokuraturiMail":"novoro@procrf-nso.ru"},
+		{"loc":[54.97958,82.72842], "objname":"г. Обь", "prokuraturiName":"г. Обь", "prokuraturiAddress":"633101, НСО, г. Обь, ул. ЖКО Аэропорта, д. 24", "prokuraturiProkuror":"Poманов Poмaн Александрович", "prokuraturiPhone":"216-94-86", "prokuraturiMail":"obpro@procrf-nso.ru"},
+		{"loc":[54.35015,81.912], "objname":"п. Ордынск", "prokuraturiName":"Ордынский район", "prokuraturiAddress":"633261, НСО, п.г.т. Ордынское, пер. Школьный, д. 3", "prokuraturiProkuror":"Власов Игорь Алексеевич", "prokuraturiPhone":"22-353", "prokuraturiMail":"ordynpro@procrf-nso.ru"},
+		{"loc":[56.34737,78.33801], "objname":"с. Северное", "prokuraturiName":"Северный район", "prokuraturiAddress":"632080, НСО, с. Северное, ул. Ленина, д. 22", "prokuraturiProkuror":"Остапенко Дмитрий Петрович", "prokuraturiPhone":"21-331", "prokuraturiMail":"nordpro@procrf-nso.ru"},
+		{"loc":[53.76901,82.30408], "objname":"п. Сузун", "prokuraturiName":"Сузунский район", "prokuraturiAddress":"633623, НСО, р.п. Сузун, ул. Ленина, д. 60", "prokuraturiProkuror":"Филичев Михаил Юрьевич", "prokuraturiPhone":"22-397", "prokuraturiMail":"suzunpro@procrf-nso.ru"},
+		{"loc":[55.22628,76.00204], "objname":"г. Татарск", "prokuraturiName":"Татарская межрайонная прокуратура", "prokuraturiAddress":"632122, НСО, г. Татарск, ул. Закриевского, д. 1", "prokuraturiProkuror":"Неволин Олег Михайлович", "prokuraturiPhone":"25-457", "prokuraturiMail":"tatarpro@procrf-nso.ru"},
+		{"loc":[55.21962,84.40247], "objname":"г. Тогучин", "prokuraturiName":"Тогучинский район", "prokuraturiAddress":"633420, НСО, г. Тогучин, ул. Садовая, д. 7а", "prokuraturiProkuror":"Русин Михаил Николаевич", "prokuraturiPhone":"21-645", "prokuraturiMail":"toguchinpro@procrf-nso.ru"},
+		{"loc":[55.30531,79.71199], "objname":"с. Убинское", "prokuraturiName":"Убинский район", "prokuraturiAddress":"632521, НСО, с. Убинское, ул. Салтыкова-Щедрина, д. 10", "prokuraturiProkuror":"Панафидин Сергей Дмитриевич", "prokuraturiPhone":"21-778", "prokuraturiMail":"ubinkapro@procrf-nso.ru"},
+		{"loc":[55.55505,75.67863], "objname":"с. Усть-Тарка", "prokuraturiName":"Усть-Таркский район", "prokuraturiAddress":"632160, НСО, с. Усть-Тарка, ул. Почтовая, д. 2", "prokuraturiProkuror":"Иванов Евгений Евгеньевич", "prokuraturiPhone":"22-576", "prokuraturiMail":"ustpro@procrf-nso.ru"},
+		{"loc":[55.28811,76.76147], "objname":"п. Чаны", "prokuraturiName":"Чановский район", "prokuraturiAddress":"632201, НСО, р.п. Чаны, ул. Победы, д. 73", "prokuraturiProkuror":"Федосихин Сергей Валентинович", "prokuraturiPhone":"21-777", "prokuraturiMail":"chanypro@procrf-nso.ru"},
+		{"loc":[54.21346,83.41095], "objname":"г. Черепаново", "prokuraturiName":"Черепановский район", "prokuraturiAddress":"633510, НСО, г. Черепаново, ул. Партизанская, д. 25а", "prokuraturiProkuror":"Пасынков Владимир Юрьевич", "prokuraturiPhone":"21-088", "prokuraturiMail":"cherepro@procrf-nso.ru"},
+		{"loc":[54.71193,76.55411], "objname":"п. Чистоозерное", "prokuraturiName":"Чистоозерный район", "prokuraturiAddress":"632720, НСО, р.п. Чистоозерное, ул. 50 лет Октября, д. 12", "prokuraturiProkuror":"Заднепровская Светлана Юрьевна", "prokuraturiPhone":"91-382", "prokuraturiMail":"chistopro@procrf-nso.ru"},
+		{"loc":[55.09016,80.92804], "objname":"г. Чулым", "prokuraturiName":"Чулымский район", "prokuraturiAddress":"632551, НСО, г. Чулым, ул. Мостовая, д. 6а", "prokuraturiProkuror":"Гулиев Роман Рафикович", "prokuraturiPhone":"21-956", "prokuraturiMail":"chulympro@procrf-nso.ru"}
+		];
+		
+		var administracii = [
+		{"loc":[55.45628,78.37852], "objname":"Куйбышев", "administraciiName":"Администрация Куйбышевского района Новосибирской области (Куйбышевская районная администрация Новосибирской области)", "administraciiAddress":"632387, Новосибирская область, Куйбышевский район, г. Куйбышев, ул. Куйбышева, 12", "administraciiPhone":"(8-262) (8-38362) 5-07-80","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.52586,79.81018], "objname":"Баган", "administraciiName":"Администрация Баганского района Новосибирской области (Баганская районная администрация Новосибирской области)", "administraciiAddress":"632770, Новосибирская область, Баганский район, с. Баган, ул. М. Горького, 28", "administraciiPhone":"(8-253) (8-38353) 2-13-87","administraciiFucks":"2-17-50", "administraciiSite":"http://www3.adm.nso.ru/bagan"},
+		{"loc":[55.31039,76.76697], "objname":"Чаны", "administraciiName":"Администрация Чановского района Новосибирской области (Чановская районная администрация Новосибирской области)", "administraciiAddress":"632210, Новосибирская область, Чановский район, п. Чаны, ул. Советская, 118", "administraciiPhone":"(8-267) (8-38367) 2-11-85","administraciiFucks":"отсутсвует", "administraciiSite":"http://www.chany.ru"},
+		{"loc":[55.31352,78.35175], "objname":"Барабинск", "administraciiName":"Администрация Барабинского района Новосибирской области (Барабинская районная администрация Новосибирской области)", "administraciiAddress":"632334, Новосибирская область, Барабинский район, г. Барабинск, ул. Островского, 8", "administraciiPhone":"(8-261) (8-38361) 2-20-54","administraciiFucks":"отсутсвует", "administraciiSite":"http://www3.adm.nso.ru/barabinsk"},
+		{"loc":[54.22671,83.36975], "objname":"Черепаново", "administraciiName":"Администрация Черепановского района Новосибирской области (Черепановская районная администрация Новосибирской области)", "administraciiAddress":"633510, Новосибирская область, Черепановский район, г. Черепаново, ул. Партизанская, 12", "administraciiPhone":"(8-245) (8-38345) 2-13-68","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.79277,83.10059], "objname":"Бердск", "administraciiName":"Администрация г. Бердска Новосибирской области (Бердская городская администрация Новосибирской области)", "administraciiAddress":"633000, Новосибирская область, г. Бердск, ул. Горького, 9", "administraciiPhone":"(8-241) (8-38341) 3-11-33", "administraciiFucks":"2-00-93", "administraciiSite":"http://www.54.berdsk.ru"},
+		{"loc":[54.71986,76.59943], "objname":"Чистоозерное", "administraciiName":"Администрация Чистоозерного района Новосибирской области (Чистоозерная районная администрация Новосибирской области)", "administraciiAddress":"632720, Новосибирская область, Чистоозерный район, п. Чистоозерное, ул. Покрышкина, 11", "administraciiPhone":"(8-268) (8-38368) 9-12-24","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.64350,84.42444], "objname":"Болотное", "administraciiName":"Администрация Болотнинского района Новосибирской области (Болотнинская районная администрация Новосибирской области)", "administraciiAddress":"633350, Новосибирская область, Болотнинский район, г. Болотное, ул. Советская, 9", "administraciiPhone":"(8-249) (8-38349) 2-27-30","administraciiFucks":"отсутсвует", "administraciiSite":"http://bolotnoe.ru"},
+		{"loc":[55.09723,80.98846], "objname":"Чулым", "administraciiName":"Администрация Чулымского района Новосибирской области (Чулымская районная администрация Новосибирской области)", "administraciiAddress":"632551, Новосибирская область, Чулымский район, г. Чулым, ул. Чулымская, 43", "administraciiPhone":"(8-250) (8-38350) 2-16-56","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.69616,76.80542], "objname":"Венгерово", "administraciiName":"Администрация Венгеровского района Новосибирской области (Венгеровская районная администрация Новосибирской области)", "administraciiAddress":"632240, Новосибирская область, Венгеровский район, с. Венгерово, ул. Ленина, 68", "administraciiPhone":"(8-269) (8-38369) 2-11-92","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.49557,79.62616], "objname":"Довольное", "administraciiName":"Администрация Доволенского района Новосибирской области (Доволенская районная администрация Новосибирской области)", "administraciiAddress":"632450, Новосибирская область, Доволенский район, с. Довольное, ул. Ленина, 106", "administraciiPhone":"(8-254) (8-38354) 2-12-40","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.68177,78.65936], "objname":"Здвинск", "administraciiName":"Администрация Здвинского района Новосибирской области (Здвинская районная администрация Новосибирской области)", "administraciiAddress":"632330, Новосибирская область, Здвинский район, с. Здвинск, ул. Мира, 13", "administraciiPhone":"(8-263) (8-38363) 2-14-51","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.60866,83.28735], "objname":"Искитим", "administraciiName":"Администрация г. Искитима Новосибирской области (Искитимская городская администрация Новосибирской области)", "administraciiAddress":"633209, Новосибирская область, г. Искитим, ул. Пушкина, 51", "administraciiPhone":"(8-243) (8-38343) 2-44-50","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[53.70646,78.07434], "objname":"Карасук", "administraciiName":"Администрация Карасукского района Новосибирской области (Карасукская районная администрация Новосибирской области)", "administraciiAddress":"632810, Новосибирская область, Карасукский район, г. Карасук, ул. Октябрьская, 39", "administraciiPhone":"(8-255) (8-38355) 5-19-83","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.17259,80.24963], "objname":"Каргат", "administraciiName":"Администрация Каргатского района Новосибирской области (Каргатская районная администрация Новосибирской области)", "administraciiAddress":"632410, Новосибирская область, Каргатский район, г. Каргат, ул. Советская, 22", "administraciiPhone":"(8-265) (8-38365) 2-14-51","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.30023,82.70233], "objname":"Колывань", "administraciiName":"Администрация Колыванского района Новосибирской области (Колыванская районная администрация Новосибирской области)", "administraciiAddress":"633160, Новосибирская область, Колыванский район, п. Колывань, ул. Ленина, 75", "administraciiPhone":"(8-252) (8-38352) 2-13-85","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.04219,82.21344], "objname":"Коченево", "administraciiName":"Администрация Коченевского района Новосибирской области (Коченевская районная администрация Новосибирской области)", "administraciiAddress":"632630, Новосибирская область, Коченевский район, п. Коченево, ул. Октябрьская, 43", "administraciiPhone":"(8-251) (8-38351) 2-31-91","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.34375,80.48035], "objname":"Кочки", "administraciiName":"Администрация Кочковского района Новосибирской области (Кочковская районная администрация Новосибирской области)", "administraciiAddress":"632490, Новосибирская область, Кочковский район, с. Кочки, ул. Революционная, 11", "administraciiPhone":"(8-256) (8-38356) 2-24-51","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[53.99324,79.24438], "objname":"Красноозерское", "administraciiName":"Администрация Краснозерского района Новосибирской области (Краснозерская районная администрация Новосибирской области)", "administraciiAddress":"632920, Новосибирская область, Краснозерский район, п. Краснозерное, ул. Чкалова, 5", "administraciiPhone":"(8-257) (8-38357) 4-23-54","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.34535,77.32727], "objname":"Купино", "administraciiName":"Администрация Купинского района Новосибирской области (Купинская районная администрация Новосибирской области)", "administraciiAddress":"632740, Новосибирская область, Купинский район, г. Купино, ул. Советов, 85", "administraciiPhone":"(8-258) (8-38358) 2-13-45","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[56.55494,76.59943], "objname":"Кыштовка", "administraciiName":"Администрация Кыштовского района Новосибирской области (Кыштовская районная администрация Новосибирской области)", "administraciiAddress":"632270, Новосибирская область, Кыштовский район, с. Кыштовка, ул. Ленина, 36", "administraciiPhone":"(8-271) (8-38371) 2-16-41","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.34695,84.25278], "objname":"Маслянино", "administraciiName":"Администрация Маслянинского района Новосибирской области (Маслянинская районная администрация Новосибирской области)", "administraciiAddress":"633570, Новосибирская область, Маслянинский район, п. Маслянино, ул. Коммунистическая, 1а", "administraciiPhone":"(8-247) (8-38347) 2-13-44","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.30336,83.58261], "objname":"Мошково", "administraciiName":"Администрация Мошковского района Новосибирской области (Мошковская районная администрация Новосибирской области)", "administraciiAddress":"633140, Новосибирская область, Мошковский район, п. Мошково, ул. Советская, 9", "administraciiPhone":"(8-248) (8-38348) 2-12-06","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.99416,82.88635], "objname":"Новосибирск", "administraciiName":"Администрация Новосибирского района Новосибирской области (Новосибирская районная администрация Новосибирской области)", "administraciiAddress":"630007, Новосибирская область, г. Новосибирск, ул. Свердлова, 14", "administraciiPhone":"(8-383) 223-03-08","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.96973,82.69409], "objname":"Обь", "administraciiName":"Администрация г. Обь Новосибирской области (Обская городская администрация Новосибирской области)", "administraciiAddress":"633102, Новосибирская область, г. Обь, ул. Строительная, 1", "administraciiPhone":"(8-273) (8-38373) 5-16-40","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[54.36936,81.90033], "objname":"Ордынск", "administraciiName":"Администрация Ордынского района Новосибирской области (Ордынская районная администрация Новосибирской области)", "administraciiAddress":"633260, Новосибирская область, Ордынский район, п. Ордынское, пр. Революции, 17", "administraciiPhone":"(8-259) (8-38359) 2-18-99","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[56.36373,78.36548], "objname":"Северное", "administraciiName":"Администрация Северного района Новосибирской области (Северная районная администрация Новосибирской области)", "administraciiAddress":"632380, Новосибирская область, Северный район, с. Северное, ул. Ленина, 14", "administraciiPhone":"(8-260) (8-38360) 2-13-78","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[53.78443,82.34528], "objname":"Сузун", "administraciiName":"Администрация Сузунского района Новосибирской области (Сузунская районная администрация Новосибирской области)", "administraciiAddress":"633623, Новосибирская область, Сузунский район, п. Сузун, ул. Ленина, 51", "administraciiPhone":"(8-246) (8-38346) 2-22-07","administraciiFucks":"2-25-50", "administraciiSite":"http://www.suzunadm.ru"},
+		{"loc":[55.23216,75.96222], "objname":"Татарск", "administraciiName":"Администрация Татарского района Новосибирской области (Татарская районная администрация Новосибирской области)", "administraciiAddress":"632120, Новосибирская область, Татарский район, г. Татарск, ул. Ленина, 56", "administraciiPhone":"(8-264) (8-38364) 2-20-00","administraciiFucks":"отсутсвует", "administraciiSite":"http://www.region.tatarsk.ru"},
+		{"loc":[55.26816,84.38599], "objname":"Тогучин", "administraciiName":"Администрация Тогучинского района Новосибирской области (Тогучинская районная администрация Новосибирской области)", "administraciiAddress":"633456, Новосибирская область, Тогучинский район, г. Тогучин, ул. Садовая, 9", "administraciiPhone":"(8-240) (8-38340) 2-19-31","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.31274,79.68246], "objname":"Убинское", "administraciiName":"Администрация Убинского района Новосибирской области (Убинская районная администрация Новосибирской области)", "administraciiAddress":"632520, Новосибирская область, Убинский район, с. Убинское, ул. Ленина, 23", "administraciiPhone":"(8-266) (8-38366) 2-11-31","administraciiFucks":"отсутсвует", "administraciiSite":"отсутсвует"},
+		{"loc":[55.57058,75.70953], "objname":"Усть-Тарка", "administraciiName":"Администрация Усть-Таркского района Новосибирской области (Усть-Таркская районная администрация Новосибирской области)", "administraciiAddress":"632160, Новосибирская область, Усть-Таркский район, с. Усть-Тарка, ул. Дзержинского, 7", "administraciiPhone":"(8-272) (8-38372) 2-21-12","administraciiFucks":"отсутсвует", "administraciiSite":"http://usttar.nso.ru"}
+		];
+		
+		var voenkomati = [
+		{"loc":[55.42629,78.29544], "objname":"Куйбышев", "voenkomatiName":"Военный комиссариат Куйбышевского района", "voenkomatiAddress":"632280, Новосибирская обл., г. Куйбышев, Коммунистическая ул., 34", "voenkomatiPhone":"+7 (38362) 50 034",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.49078,79.79645], "objname":"Баган", "voenkomatiName":"Военный комиссариат Баганского района", "voenkomatiAddress":"632770, Новосибирская обл., Баганский р-н, с. Баган, Горького ул., 18", "voenkomatiPhone":"+7 (38353) 21 368",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.34945,78.39706], "objname":"Барабинск", "voenkomatiName":"Военный комиссариат Барабинского района", "voenkomatiAddress":"632330, Новосибирская обл., г. Барабинск, Ульяновская ул., 68", "voenkomatiPhone":"+7 (38361) 22 515",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.73731,83.09235], "objname":"Бердск", "voenkomatiName":"Военный комиссариат г. Бердск", "voenkomatiAddress":"633190, Новосибирская обл., г. Бердск, Первомайская ул., 66", "voenkomatiPhone":"+7 (38341) 30 618",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.66597,84.37363], "objname":"Болотное", "voenkomatiName":"Военный комиссариат Болотнинского района", "voenkomatiAddress":"633350, Новосибирская обл., г. Болотное, Советская ул., 2", "voenkomatiPhone":"+7 (38349) 21 485",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.67294,76.75461], "objname":"Венгерово", "voenkomatiName":"Военный комиссариат Венгеровского района", "voenkomatiAddress":"632240, Новосибирская обл., Венгеровский р-н, с. Венгерово, Герцена ул., 28", "voenkomatiPhone":"+7 (38369) 21 138",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.47961,79.67697], "objname":"Довольное", "voenkomatiName":"Военный комиссариат Доволенского района", "voenkomatiAddress":"632450, Новосибирская обл., Доволенский р-н, с. Довольное, Ленина ул., 113", "voenkomatiPhone":"+7 (38354) 20 329",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.70757,78.64082], "objname":"Здвинск", "voenkomatiName":"Военный комиссариат Здвинского района", "voenkomatiAddress":"632951, Новосибирская обл., Здвинский р-н, с. Здвинск, Здвинского ул., 10", "voenkomatiPhone":"+7 (38363) 21 152",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.63808,83.32100], "objname":"Искитим", "voenkomatiName":"Военный комиссариат Искитимского района", "voenkomatiAddress":"633203, Новосибирская обл., г. Искитим, Индустриальный мкр., 32б", "voenkomatiPhone":"+7 (38343) 36 613",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[53.73978,78.04482], "objname":"Карасук", "voenkomatiName":"Военный комиссариат Карасукского района", "voenkomatiAddress":"632868, Новосибирская обл., г. Карасук, Октябрьская ул., 63", "voenkomatiPhone":"+7 (38355) 33 330",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.20082,80.29770], "objname":"Каргат", "voenkomatiName":"Военный комиссариат Каргатского и Убинского районов", "voenkomatiAddress":"632402, Новосибирская обл., г. Каргат, Октябрьская ул., 4", "voenkomatiPhone":"+7 (38365) 21 603",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.30453,82.74696], "objname":"Колывань", "voenkomatiName":"Военный комиссариат Колыванского района", "voenkomatiAddress":"633160, Новосибирская обл., Колыванский р-н, рп Колывань, Советская ул., 43", "voenkomatiPhone":"+7 (38352) 51 208",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.01424,82.19215], "objname":"Коченево", "voenkomatiName":"Военный комиссариат Коченевского и Колыванского районов", "voenkomatiAddress":"632640, Новосибирская обл., Коченевский р-н, рп Коченево, Максима Горького ул., 202", "voenkomatiPhone":"+7 (38351) 23 033",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.32013,80.50095], "objname":"Кочки", "voenkomatiName":"Военный комиссариат Кочковского района", "voenkomatiAddress":"632490, Новосибирская обл., Кочковский р-н, с. Кочки, Советская ул., 22", "voenkomatiPhone":"+7 (38356) 22 501",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[53.97426,79.22241], "objname":"Красноозерское", "voenkomatiName":"информация отсутствует", "voenkomatiAddress":"информация отсутствует", "voenkomatiPhone":"информация отсутствует",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.36616,77.28470], "objname":"Купино", "voenkomatiName":"Военный комиссариат Купинского района", "voenkomatiAddress":"632730, Новосибирская обл., г. Купино, Советов ул., 82", "voenkomatiPhone":"+7 (38358) 23 803",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[56.54813,76.63445], "objname":"Кыштовка", "voenkomatiName":"Военный комиссариат Кыштовского района", "voenkomatiAddress":"632270, Новосибирская обл., Кыштовский р-н, с. Кыштовка, Ленина ул., 42", "voenkomatiPhone":"+7 (38371) 21 595",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.33815,84.19098], "objname":"Маслянино", "voenkomatiName":"Военный комиссариат Маслянинского района", "voenkomatiAddress":"633564, Новосибирская обл., Маслянинский р-н, рп Маслянино, Ленинская ул., 46", "voenkomatiPhone":"+7 (38347) 23 373",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.29867,83.62106], "objname":"Мошково", "voenkomatiName":"Военный комиссариат Мошковского района", "voenkomatiAddress":"633131, Новосибирская обл., Мошковский р-н, рп Мошково, Кирова ул., 5", "voenkomatiPhone":"+7 (38348) 21 069",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.99022,82.96188], "objname":"Новосибирск", "voenkomatiName":"ВОЕННЫЙ КОМИССАРИАТ НОВОСИБИРСКОЙ ОБЛАСТИ", "voenkomatiAddress":"630007, г. Новосибирск, Советская ул., 4а", "voenkomatiPhone":"+7 (383) 223 9714", "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.02094,82.94266], "objname":"Новосибирск", "voenkomatiName":"ВОЕННЫЕ КОМИССАРИАТЫ Кировского и Ленинского районов", "voenkomatiAddress":"630088, г. Новосибирск, Петухова ул., 30", "voenkomatiPhone":"+7 (383) 342 0624",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.06736,83.00583], "objname":"Новосибирск", "voenkomatiName":"Военный комиссариат Октябрьского, Железнодорожного и Центрального районов", "voenkomatiAddress":"630008, г. Новосибирск, Лескова ул., 140", "voenkomatiPhone":"+7 (383) 266 0253",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.99810,82.83417], "objname":"Новосибирск", "voenkomatiName":"ВОЕННЫЕ КОМИССАРИАТЫ Дзержинского, Калининского и Заельцовского районов", "voenkomatiAddress":"630048, г. Новосибирск, Тайгинская ул., 17", "voenkomatiPhone":"+7 (383) 274 0689",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.93109,82.91245], "objname":"Новосибирск", "voenkomatiName":"Военный комиссариат Советского и Первомайского районов", "voenkomatiAddress":"630128, г. Новосибирск, Кутателадзе ул., 16", "voenkomatiPhone":"+7 (383) 339 9467",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.99298,82.70508], "objname":"Обь", "voenkomatiName":"Военный комиссариат г. Обь", "voenkomatiAddress":"632640, Новосибирская обл., г. Обь, Октябрьская ул., 100", "voenkomatiPhone":"+7 (38373) 50 960",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.35336,81.88248], "objname":"Ордынск", "voenkomatiName":"Военный комиссариат Ордынского района", "voenkomatiAddress":"633210, Новосибирская обл., Ордынский р-н, рп Ордынское, Октябрьская ул., 10", "voenkomatiPhone":"+7 (38359) 22 985",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[56.34204,78.37578], "objname":"Северное", "voenkomatiName":"Военный комиссариат Северного района", "voenkomatiAddress":"632081, Новосибирская обл., Северный р-н, с. Северное, Радищева ул., 15", "voenkomatiPhone":"+7 (38360) 21 150",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[53.78402,82.30202], "objname":"Сузун", "voenkomatiName":"Военный комиссариат Сузунского района", "voenkomatiAddress":"633623, Новосибирская обл., Сузунский р-н, рп Сузун, Горького ул., 80а", "voenkomatiPhone":"+7 (38346) 22 564",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.20552,75.98213], "objname":"Татарск", "voenkomatiName":"Военный комиссариат г. Татарск и Татарского района", "voenkomatiAddress":"632120, Новосибирская обл., г. Татарск, ул. Ленина, 88", "voenkomatiPhone":"+7 (38364) 20 807",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.22628,84.36607], "objname":"Тогучин", "voenkomatiName":"Военный комиссариат Тогучинского района", "voenkomatiAddress":"633456, Новосибирская обл., г. Тогучин, Островского ул., 34", "voenkomatiPhone":"+7 (38340) 21 391",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.28967,79.69070], "objname":"Убинское", "voenkomatiName":"информация отсутствует", "voenkomatiAddress":"информация отсутствует", "voenkomatiPhone":"информация отсутствует",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.55971,75.69649], "objname":"Усть-Тарка", "voenkomatiName":"информация отсутствует", "voenkomatiAddress":"информация отсутствует", "voenkomatiPhone":"информация отсутствует",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.29788,76.74362], "objname":"Чаны", "voenkomatiName":"Военный комиссариат Чановского района", "voenkomatiAddress":"632201, Новосибирская обл., Чановский р-н, рп Чаны, Комсомольская ул., 17", "voenkomatiPhone":"+7 (38367) 21 001",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.20703,83.37524], "objname":"Черепаново", "voenkomatiName":"Военный комиссариат Черепановского района", "voenkomatiAddress":"633520, Новосибирская обл., г. Черепаново, Партизанская ул., 50б", "voenkomatiPhone":"+7 (38345) 22 937",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[54.69884,76.58020], "objname":"Чистоозерное", "voenkomatiName":"Военный комиссариат Чистоозерного района", "voenkomatiAddress":"632720, Новосибирская обл., Чистоозерный р-н, рп Чистоозерное, 50 лет Октября ул., 12", "voenkomatiPhone":"+7 (38368) 91 670",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"},
+		{"loc":[55.08151,80.95757], "objname":"Чулым", "voenkomatiName":"Военный комиссариат Чулымского района", "voenkomatiAddress":"632551, Новосибирская обл., г. Чулым, Кооперативная ул., 18", "voenkomatiPhone":"+7 (38350) 21 285",  "voenkomatiFucks":"информация отсутствует", "voenkomatiSite":"информация отсутствует"}
+		];
+		
+		var sudi = [
+		{"loc":[54.52347,79.77859], "objname":"с. Баган", "sudiName":"Баганский районный суд Новосибирской области (Суд Баганского района Новосибирской области)", "sudiAddress":"632770, Новосибирская область, Баганский район, с. Баган, ул. Горького, 38", "sudiPhone":"(8-253) (8-38353) 2-12-30; 2-22-12"},
+		{"loc":[55.34086,78.31467], "objname":"г. Барабинск", "sudiName":"Барабинский районный суд Новосибирской области (Суд г. Барабинска и Барабинского района Новосибирской области)", "sudiAddress":"632300, Новосибирская область, Барабинский район, г. Барабинск, пер. Индустриальный, 7", "sudiPhone":"(8-261) (8-38361) 2-28-07; 2-33-29"},
+		{"loc":[54.77297,83.05939], "objname":"г. Бердск", "sudiName":"Бердский районный суд Новосибирской области (Суд г. Бердска Новосибирской области)", "sudiAddress":"633190, Новосибирская область, г. Бердск, ул. Ленина, 45", "sudiPhone":"(8-241) (8-38341) 2-35-89; 2-25-44"},
+		{"loc":[55.6435,84.38324], "objname":"г. Болотное", "sudiName":"Болотнинский районный суд Новосибирской области (Суд Болотнинского района Новосибирской области)", "sudiAddress":"633350, Новосибирская область, Болотнинский район, г. Болотное, ул. Калинина, 13", "sudiPhone":"(8-249) (8-38349) 2-25-54; 2-23-25"},
+		{"loc":[55.71009,76.75873], "objname":"с. Венгерово", "sudiName":"Венгеровский районный суд Новосибирской области (Суд Венгеровского района Новосибирской области)", "sudiAddress":"632240, Новосибирская область, Венгеровский район, с. Венгерово, ул. Воровского, 125", "sudiPhone":"(8-269) (8-38369) 2-18-38; 2-22-08"},
+		{"loc":[54.47562,79.64539], "objname":"с. Довольное", "sudiName":"Доволенский районный суд Новосибирской области (Суд Доволенского района Новосибирской области)", "sudiAddress":"632451, Новосибирская область, Доволенский район, с. Довольное, ул. Мичурина, 12", "sudiPhone":"(8-254) (8-38354) 2-23-38; 2-02-43"},
+		{"loc":[54.69923,78.6264], "objname":"с. Здвинск", "sudiName":"Здвинский районный суд Новосибирской области (Суд Здвинского района Новосибирской области)", "sudiAddress":"632950, Новосибирская область, Здвинский район, с. Здвинск, ул. Здвинского, 38", "sudiPhone":"(8-263) (8-38363) 2-14-89"},
+		{"loc":[54.61185,83.33267], "objname":"г. Искитим", "sudiName":"Искитимский районный суд Новосибирской области (Суд г. Искитима и Искитимского района Новосибирской области)", "sudiAddress":"633210, Новосибирская область, Искитимский район, г. Искитим, ул. Советская, 234", "sudiPhone":"(8-243) (8-38343) 2-05-82; 2-99-31"},
+		{"loc":[53.72353,78.03589], "objname":"г. Карасук", "sudiName":"Карасукский районный суд Новосибирской области (Суд Карасукского района Новосибирской области)", "sudiAddress":"632868, Новосибирская область, Карасукский район, г. Карасук, ул. Октябрьская, 12", "sudiPhone":"(8-255) (8-38355) 3-12-14"},
+		{"loc":[55.17887,80.30731], "objname":"г. Каргат", "sudiName":"Каргатский районный суд Новосибирской области (Суд Каргатского района Новосибирской области)", "sudiAddress":"632400, Новосибирская область, Каргатский район, г. Каргат, ул. Горького, 38", "sudiPhone":"(8-265) (8-38365) 2-12-88; 2-14-88"},
+		{"loc":[55.32914,82.68173], "objname":"п. Колывань", "sudiName":"Колыванский районный суд Новосибирской области (Суд Колыванского района Новосибирской области)", "sudiAddress":"633160, Новосибирская область, Колыванский район, п. Колывань, ул. Московская, 46", "sudiPhone":"(8-252) (8-38352) 5-12-81; 5-13-20"},
+		{"loc":[55.00046,82.21756], "objname":"п. Коченево", "sudiName":"Коченевский районный суд Новосибирской области (Суд Коченевского района Новосибирской области)", "sudiAddress":"632630, Новосибирская область, Коченевский район, п. Коченево, ул. Плахотного, 38", "sudiPhone":"(8-251) (8-38351) 2-32-66; 2-39-77"},
+		{"loc":[54.32293,80.46387], "objname":"с. Кочки", "sudiName":"Кочковский районный суд Новосибирской области (Суд Кочковского района Новосибирской области)", "sudiAddress":"632490, Новосибирская область, Кочковский район, с. Кочки, ул. Советская, 20 ", "sudiPhone":"(8-256) (8-38356) 2-24-44"},
+		{"loc":[53.97224,79.26636], "objname":"п. Краснозерское", "sudiName":"Краснозерский районный суд Новосибирской области (Суд Краснозерского района Новосибирской области)", "sudiAddress":"632920, Новосибирская область, Краснозерский район, п. Краснозерка, ул. Октябрьская, 58 ", "sudiPhone":"(8-257) (8-38357) 4-22-95; 4-29-01"},
+		{"loc":[55.46873,78.33252], "objname":"г. Куйбышев", "sudiName":"Куйбышевский районный суд Новосибирской области (Суд г. Куйбышева и Куйбышевского района Новосибирской области)", "sudiAddress":"632387, Новосибирская область, Куйбышевский район, г. Куйбышев, ул. Куйбышева, 20", "sudiPhone":"(8-262) (8-38362) 5-17-31; 5-02-70"},
+		{"loc":[54.34935,77.29431], "objname":"г. Купино", "sudiName":"Купинский районный суд Новосибирской области (Суд Купинского района Новосибирской области)", "sudiAddress":"632733, Новосибирская область, Купинский район, г. Купино, ул. К. Маркса, 8", "sudiPhone":"(8-258) (8-38358) 2-13-71; 2-04-07"},
+		{"loc":[56.53602,76.62003], "objname":"с. Кыштовка", "sudiName":"Кыштовский районный суд Новосибирской области (Суд Кыштовского района Новосибирской области)", "sudiAddress":"632270, Новосибирская область, Кыштовский район, с. Кыштовка, ул. Кооператвная, 25", "sudiPhone":"(8-271) (8-38371) 2-22-84; 2-12-91"},
+		{"loc":[54.33254,84.2363], "objname":"п. Маслянино", "sudiName":"Маслянинский районный суд Новосибирской области (Суд Маслянинского района Новосибирской области)", "sudiAddress":"633560, Новосибирская область, Маслянинский район, п. Маслянинский, ул. Партизанская, 1", "sudiPhone":"(8-247) (8-38347) 2-34-95; 2-21-36"},
+		{"loc":[55.28928,83.60184], "objname":"п. Мошково", "sudiName":"Мошковский районный суд Новосибирской области (Суд Мошковского района Новосибирской области)", "sudiAddress":"633131, Новосибирская область, Мошковский район, п. Мошково, ул. Советская, 10 ", "sudiPhone":"(8-248) (8-38348) 2-14-22; 2-31-19"},
+		{"loc":[55.03038,83.02917], "objname":"г. Новосибирск", "sudiName":"Новосибирский районный суд Новосибирской области (Суд Новосибирского района Новосибирской области)", "sudiAddress":"630024, Новосибирская область, г. Новосибирск, ул. Бетонная, 39", "sudiPhone":"(8-383) 361-15-46; 361-17-64"},
+		{"loc":[54.99416,82.66937], "objname":"г. Обь", "sudiName":"Обской городской суд Новосибирской области (Суд г. Оби Новосибирской области)", "sudiAddress":"633102, Новосибирская область, г. Обь, ул. Геодезическая, 66а ", "sudiPhone":"(8-273) (8-38373) 5-09-13"},
+		{"loc":[54.35496,81.94016], "objname":"п. Ордынск", "sudiName":"Ордынский районный суд Новосибирской области (Суд Ордынского района Новосибирской области)", "sudiAddress":"633260, Новосибирская область, Ордынский район, п. Ордынское, пр. Революции, 16 ", "sudiPhone":"(8-259) (8-38359) 2-20-94; 2-21-16"},
+		{"loc":[56.36373,78.41629], "objname":"с. Северное", "sudiName":"Северный районный суд Новосибирской области (Суд Северного района Новосибирской области)", "sudiAddress":"632380, Новосибирская область, Северный район, с. Северное, ул. Урицкого, 20", "sudiPhone":"(8-260) (8-38360) 2-18-32"},
+		{"loc":[53.76576,82.33292], "objname":"п. Сузун", "sudiName":"Сузунский районный суд Новосибирской области (Суд Сузунского района Новосибирской области)", "sudiAddress":"633623, Новосибирская область, Сузунский район, п. Сузун, ул. Остальцова, 25 ", "sudiPhone":"(8-246) (8-38346) 2-20-52; 2-38-60"},
+		{"loc":[55.21806,75.94299], "objname":"г. Татарск", "sudiName":"Татарский районный суд Новосибирской области (Суд г. Татарска и Татарского района Новосибирской области)", "sudiAddress":"632120, Новосибирская область, Татарский район, г. Татарск, ул. Ленина, 82 ", "sudiPhone":"(8-264) (8-38364) 2-28-49; 2-20-33"},
+		{"loc":[55.25016,84.43405], "objname":"г. Тогучин", "sudiName":"Тогучинский районный суд Новосибирской области (Суд Тогучинского района Новосибирской области)", "sudiAddress":"633456, Новосибирская область, Тогучинский район, г. Тогучин, ул. Садовая, 2 ", "sudiPhone":"(8-240) (8-38340) 2-11-91; 2-23-83"},
+		{"loc":[55.29945,79.66049], "objname":"с. Убинское", "sudiName":"Убинский районный суд Новосибирской области (Суд Убинского района Новосибирской области)", "sudiAddress":"632521, Новосибирская область, Убинский район, с. Убинск, ул. Железнодорожная, 1", "sudiPhone":"(8-266) (8-38366) 2-14-48; 2-16-43"},
+		{"loc":[55.56825,75.66147], "objname":"с. Усть-Тарка", "sudiName":"Усть-Таркский районный суд Новосибирской области (Суд Усть-Таркского района Новосибирской области)", "sudiAddress":"632160, Новосибирская область, Усть-Таркский район, с. Усть-Тарка, ул. Чапаева, 13", "sudiPhone":"(8-272) (8-38372) 2-24-58; 2-27-37"},
+		{"loc":[55.28928,76.78619], "objname":"п. Чаны", "sudiName":"Чановский районный суд Новосибирской области (Суд Чановского района Новосибирской области)", "sudiAddress":"632200, Новосибирская область, Чановский район, п. Чаны, ул. Комсомольская, 4 ", "sudiPhone":"(8-267) (8-38367) 2-15-98; 2-24-46"},
+		{"loc":[54.22992,83.42056], "objname":"г. Черепаново", "sudiName":"Черепановский районный суд Новосибирской области (Суд Черепановского района Новосибирской области)", "sudiAddress":"633525, Новосибирская область, Черепановский район, г. Черепаново, ул. Республиканская, 42 ", "sudiPhone":"(8-245) (8-38345) 2-16-29; 2-23-82"},
+		{"loc":[54.72859,76.55411], "objname":"п. Чистоозерное", "sudiName":"Чистоозерный районный суд Новосибирской области (Суд Чистоозерного района Новосибирской области)", "sudiAddress":"632720, Новосибирская область, Чистоозерный район, п. Чистоозерка, ул. Ленина, 35", "sudiPhone":"(8-268) (8-38368) 9-16-42"},
+		{"loc":[55.11216,80.94452], "objname":"г. Чулым", "sudiName":"Чулымский районный суд Новосибирской области (Суд Чулымского района Новосибирской области)", "sudiAddress":"632550, Новосибирская область, Чулымский район, г. Чулым, ул. Чулымская, 25", "sudiPhone":"(8-250) (8-38350) 2-21-62; 2-11-64"}
+		];
+		
+	var redIcon = L.icon({
+		iconUrl: 'images/marker-icon_1m.png',
+		iconSize:     [25, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [-1, -25] // point from which the popup should open relative to the iconAnchor
+	});
+	var koloniiIcon = L.icon({
+		iconUrl: 'images/icons/kolonii_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var domrebenkaIcon = L.icon({
+		iconUrl: 'images/icons/dom_rebenka_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var sizoIcon = L.icon({
+		iconUrl: 'images/icons/sizo_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var policeIcon = L.icon({
+		iconUrl: 'images/icons/police_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var domstarihIcon = L.icon({
+		iconUrl: 'images/icons/dom_starih_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var detdomIcon = L.icon({
+		iconUrl: 'images/icons/detdom_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var administraciiIcon = L.icon({
+		iconUrl: 'images/icons/administracii_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var prokuraturiIcon = L.icon({
+		iconUrl: 'images/icons/prokuraturi_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var sudiIcon = L.icon({
+		iconUrl: 'images/icons/sudi_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	var voenkomatiIcon = L.icon({
+		iconUrl: 'images/icons/voenkomati_orange.png',
+		iconSize:     [34, 41], // size of the icon
+		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
+		popupAnchor:  [1, -30] // point from which the popup should open relative to the iconAnchor
+	});
+	
+	var markersLayer = new L.LayerGroup();	//layer contain searched elements
+	map.addLayer(markersLayer);
+	var koloniiLayer = new L.LayerGroup();
+	var administraciiLayer = new L.LayerGroup();
+	var voenkomatiLayer = new L.LayerGroup();
+	var sudiLayer = new L.LayerGroup();
+	var prokuraturiLayer = new L.LayerGroup();
+	var detdomLayer = new L.LayerGroup();
+	var policeLayer = new L.LayerGroup();
+	var domstarihLayer = new L.LayerGroup();
+	var domrebenkaLayer = new L.LayerGroup();
+	var sizoLayer = new L.LayerGroup();
+
+	map.addControl( new L.Control.Search({layer: markersLayer, initial: false}) );  //inizialize search control
+	
+	map.on( "zoomend", function( e ) {
+    if ( map.getZoom( ) <= 8 ) {
+		map.addLayer(markersLayer);
+        map.removeLayer(koloniiLayer);
+		map.removeLayer(administraciiLayer);
+		map.removeLayer(voenkomatiLayer);
+		map.removeLayer(sudiLayer);
+		map.removeLayer(prokuraturiLayer);
+		map.removeLayer(detdomLayer);
+		map.removeLayer(policeLayer);
+		map.removeLayer(domstarihLayer);
+		map.removeLayer(domrebenkaLayer);
+		map.removeLayer(sizoLayer);
+    }
+	if ( map.getZoom( ) > 8 ) {
+		map.addLayer(koloniiLayer);
+		map.addLayer(administraciiLayer);
+		map.addLayer(voenkomatiLayer);
+        map.removeLayer(markersLayer);
+		map.addLayer(sudiLayer);
+		map.addLayer(prokuraturiLayer);
+		map.addLayer(detdomLayer);
+		map.addLayer(policeLayer);
+		map.addLayer(domstarihLayer);
+		map.addLayer(domrebenkaLayer);
+		map.addLayer(sizoLayer);
+    }
+	});
+	
+	////////////populate map with markers from sample data
+	for(i in data) {
+		var objname = data[i].objname,	//value searched
+			loc = data[i].loc,		//position found
+			marker = new MyCustomMarker(new L.latLng(loc), {objname: objname, icon: redIcon} );//se property searched
+		marker.bindPopup(objname, {showOnMouseOver: true});
+		markersLayer.addLayer(marker);
+	}
+	
+	for(i in kolonii) {
+		var objname = kolonii[i].objname,
+		koloniiName = kolonii[i].koloniiName,
+		koloniiAddress = kolonii[i].koloniiAddress,
+		koloniiPhone=kolonii[i].koloniiPhone,
+		koloniiBoss=kolonii[i].koloniiBoss,
+		koloniiBossPhone=kolonii[i].koloniiBossPhone,
+		loc = kolonii[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: koloniiIcon} );//se property searched
+		marker.bindPopupKolonii(objname, koloniiName, koloniiAddress,koloniiPhone,koloniiBoss,koloniiBossPhone, {showOnMouseOver: true});
+		koloniiLayer.addLayer(marker);
+	}
+	for(i in sizo) {
+		var objname = sizo[i].objname,
+		sizoName = sizo[i].sizoName,
+		sizoAddress = sizo[i].sizoAddress,
+		sizoPhone=sizo[i].sizoPhone,
+		sizoBoss=sizo[i].sizoBoss,
+		loc = sizo[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: sizoIcon} );//se property searched
+		marker.bindPopupSizo(objname, sizoName, sizoAddress,sizoPhone,sizoBoss, {showOnMouseOver: true});
+		sizoLayer.addLayer(marker);
+	}
+	
+	for(i in domrebenka) {
+		var objname = domrebenka[i].objname,
+		domrebenkaName = domrebenka[i].domrebenkaName,
+		domrebenkaAddress = domrebenka[i].domrebenkaAddress,
+		domrebenkaPhone=domrebenka[i].domrebenkaPhone,
+		loc = domrebenka[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: domrebenkaIcon} );//se property searched
+		marker.bindPopupDomrebenka(objname, domrebenkaName, domrebenkaAddress,domrebenkaPhone, {showOnMouseOver: true});
+		domrebenkaLayer.addLayer(marker);
+	}
+	
+	for(i in police) {
+		var objname = police[i].objname,
+		policeName = police[i].policeName,
+		policeAddress = police[i].policeAddress,
+		policePhone=police[i].policePhone,
+		policePhone2=police[i].policePhone2,
+		policeBoss=police[i].policeBoss,
+		policeSite=police[i].policeSite,
+		loc = police[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: policeIcon} );//se property searched
+		marker.bindPopupPolice(objname, policeName, policeAddress, policePhone, policePhone2, policeBoss, policeSite, {showOnMouseOver: true});
+		policeLayer.addLayer(marker);
+	}
+	
+	for(i in domstarih) {
+		var objname = domstarih[i].objname,
+		domstarihName = domstarih[i].domstarihName,
+		domstarihAddress = domstarih[i].domstarihAddress,
+		domstarihPhone=domstarih[i].domstarihPhone,
+		domstarihFaks=domstarih[i].domstarihFaks,
+		domstarihMail=domstarih[i].domstarihMail,
+		loc = domstarih[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: domstarihIcon} );//se property searched
+		marker.bindPopupDomstarih(objname, domstarihName, domstarihAddress, domstarihPhone, domstarihFaks, domstarihMail, {showOnMouseOver: true});
+		domstarihLayer.addLayer(marker);
+	}
+	for(i in detdom) {
+		var objname = detdom[i].objname,
+		detdomName = detdom[i].detdomName,
+		detdomAddress = detdom[i].detdomAddress,
+		detdomPhone=detdom[i].detdomPhone,
+		detdomBoss=detdom[i].detdomBoss,
+		loc = detdom[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: detdomIcon} );//se property searched
+		marker.bindPopupDetdom(objname, detdomName, detdomAddress,detdomPhone,detdomBoss, {showOnMouseOver: true});
+		detdomLayer.addLayer(marker);
+	}
+	
+	for(i in prokuraturi) {
+		var objname = prokuraturi[i].objname,
+		prokuraturiName = prokuraturi[i].prokuraturiName,
+		prokuraturiAddress = prokuraturi[i].prokuraturiAddress,
+		prokuraturiProkuror=prokuraturi[i].prokuraturiProkuror,
+		prokuraturiPhone=prokuraturi[i].prokuraturiPhone,
+		prokuraturiMail=prokuraturi[i].prokuraturiMail,
+		loc = prokuraturi[i].loc,
+		marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: prokuraturiIcon} );//se property searched
+		marker.bindPopupProkuraturi(objname, prokuraturiName, prokuraturiAddress, prokuraturiProkuror, prokuraturiPhone, prokuraturiMail, {showOnMouseOver: true});
+		prokuraturiLayer.addLayer(marker);
+	}
+	
+	for(i in voenkomati) {
+		var objname = voenkomati[i].objname,	//value searched
+			loc = voenkomati[i].loc,
+			voenkomatiName = voenkomati[i].voenkomatiName,
+			voenkomatiAddress = voenkomati[i].voenkomatiAddress,
+			voenkomatiPhone=voenkomati[i].voenkomatiPhone,
+			voenkomatiFucks=voenkomati[i].voenkomatiFucks,
+			voenkomatiSite=voenkomati[i].voenkomatiSite,			
+			//position found
+			marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: voenkomatiIcon} );//se property searched
+		marker.bindPopupVoenkomati(objname, voenkomatiName, voenkomatiAddress, voenkomatiPhone, voenkomatiFucks, voenkomatiSite, {showOnMouseOver: true});
+		voenkomatiLayer.addLayer(marker);
+	}
+	
+	for(i in administracii) {
+		var objname = administracii[i].objname,	//value searched
+			administraciiName = administracii[i].administraciiName,
+			administraciiAddress = administracii[i].administraciiAddress,
+			administraciiPhone=administracii[i].administraciiPhone,
+			administraciiFucks=administracii[i].administraciiFucks,
+			administraciiSite=administracii[i].administraciiSite,
+			loc = administracii[i].loc,
+			marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: administraciiIcon} );//se property searched
+		marker.bindPopupAdministracii(objname, administraciiName, administraciiAddress, administraciiPhone,administraciiFucks,administraciiSite, {showOnMouseOver: true});
+		administraciiLayer.addLayer(marker);
+	}
+	
+	for(i in sudi) {
+		var objname = sudi[i].objname,	//value searched
+			sudiName = sudi[i].sudiName,
+			sudiAddress = sudi[i].sudiAddress,
+			sudiPhone = sudi[i].sudiPhone,
+			loc = sudi[i].loc,
+			marker = new InfoCustomMarker(new L.latLng(loc), {objname: objname, icon: sudiIcon} );//se property searched
+		marker.bindPopupSudi(objname, sudiName, sudiAddress, sudiPhone,{showOnMouseOver: true});
+		sudiLayer.addLayer(marker);
+	}
+	
+	var koloniiMarkers = {
+
+	};
+
+	var markerLayers = {
+	"Колонии": koloniiLayer,
+    "Администрации": administraciiLayer,
+	"Военкоматы": voenkomatiLayer,
+	"Суды": sudiLayer,
+	"Прокуратуры": prokuraturiLayer,
+	"Детские дома": detdomLayer,
+	"Полиция": policeLayer,
+	"Дома престарелых": domstarihLayer,
+	"Дома ребенка": domrebenkaLayer,
+	"Следственные изоляторы": sizoLayer
+	};
+	L.control.layers(koloniiMarkers, markerLayers, {collapsed: false}).addTo(map);
+
+	</script>
+	<div id="maptitle" style="width: 800px; height: 50px">
+	<p style="color:rgba(253, 114, 2, 1);">Карта Новосибирской области для правозащитных организаций</p>
+	</div>
+</body>
+</html>

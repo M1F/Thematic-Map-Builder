@@ -1,0 +1,16 @@
+{
+  "name": "Map",
+  "main": "index.html",
+  "window": {
+    "title": "Map",
+    "toolbar": false,
+    "frame": true,
+    "width": 1418,
+    "height": 868,
+    "position": "center",
+    "min_width": 1418,
+    "min_height": 868,
+    "max_width": 1418,
+    "max_height": 868
+  }
+}
