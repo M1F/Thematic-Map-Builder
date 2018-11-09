@@ -1,396 +1,250 @@
-<!DOCTYPE>
 <html>
-<head>
 
+<head>
 	<!--<meta http-equiv="Cache-Control" content="no-cache">
 	<meta http-equiv="Cache-Control" content="private">
 	<meta http-equiv="Cache-Control" content="max-age=1, must-revalidate">
 	<meta http-equiv="Cache-Control" content="max-age=1, proxy-revalidate">-->
 
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>Thematic maps builder</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-	<link rel="stylesheet" href="css/leaflet.css" />
-	<link rel="stylesheet" href="css/L.Control.Pan.css" />
-	<link rel="stylesheet" href="css/L.Control.Zoomslider.css" />
-	<link rel="stylesheet" href="css/leaflet-search.css" />
-	<link rel="stylesheet" href="css/Control.MiniMap.css" />
-	<link rel="stylesheet" href="css/L.Control.MousePosition.css" />
-	<link rel="stylesheet" href="css/rose.css" />
-	<link rel="stylesheet" href="css/infoPanel.css" />
-	<link rel="stylesheet" href="css/CreatePanel.css" />
-	<link rel="stylesheet" href="css/Legend.css" />
-	<link rel="stylesheet" href="css/mapbuild.css" />	
-	<link rel="Stylesheet" href="css/jPicker-1.1.6.min.css" />
-	<link rel="Stylesheet" href="css/jPicker.css" />
-	
-	<script src="js/index.js"></script>
-
-	<script src="js/leaflet.js"></script>
-	<script type="text/javascript" src="borders.js"></script>
-	<!--<script type="text/javascript" src="gjson/csvdata.csv.js"></script> -->
-	<script src="js/L.Control.Pan.js" ></script>
-	<script src="js/L.Control.Zoomslider.js" ></script>
-	<script src="js/leaflet-search.js"></script>
-	<script src="js/Control.MiniMap.js"></script>
-	<script src="js/L.Control.MousePosition.js"></script>
-	<script src="js/rose.js"></script>
-	<script src="js/CreatePanel.js"></script>
-
-	<script src="js/jquery-1.4.4.min.js"></script>
-	<script src="js/jpicker-1.1.6.min.js"></script>
-	<script src="js/rainbowvis.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
+	<!--<script src="js/jquery-1.8.0.js"></script>
+	<script src="js/jquery-1.8.3.min.js"></script>-->
+	<script src="js/jquery-ui-1.8.23.custom.min.js"></script>
 	
 </head>
+
 <body>
-	<div id="map" style="width: 1400px; height: 850px"></div>
+<center>
 
+<!-- Само окно -->
+<div id="boxes">  
+<div id="dialog" id="dialog" class="window">
+<div id="t" class="text"> Выберите файл на компьютере</div>
+<div id="t1" class="text"> Выберите столбец с названием регионов</div>
+<div id="t2" class="text"> Выберите столбец с данными</div>
+<div class="top">
+<a href="#" class="link closed">Закрыть</a>
+</div>
+</br>
+<div id="form1" class="content">
+
+<form action="upload.php" method="post" target="hiddenframe" enctype="multipart/form-data" onsubmit="hideBtn();">
+
+<div id="file">
+<input type="file" id="userfile" name="userfile" />
+</div>
+
+<input type="submit" name="upload" id="upload" class="button2" value="Загрузить" />
+</form>
+<div id="res"></div>
+<iframe id="hiddenframe" name="hiddenframe" style="width:0px; height:0px; border:0px"></iframe>
+<input type="button" id="next" class="button2" value="далее">
+<input type="hidden" id="fname" value="">
+<input type="hidden" id="fpath" value="">
+<input type="hidden" id="regname" value="">
+</div>
+
+<div id="form2" class="content">
+<div id="res2"></div>
+<input type="button" id="back1" class="button1" value="назад">
+<input type="button" id="next1" class="button2" value="далее">
+</div>
+
+<div id="form3" class="content">
+<div id="res3"></div>
+<input type="button" id="back2" class="button1" value="назад">
+<input type="button" id="import" class="button2" value="готово">
+
+</div>
+</div>
+</div>
+<div id="mask"></div>
+</body>
+
+<script>
+$(document).ready(function() {   
+    $('a[name=modal]').click(function(e) {
+    e.preventDefault();
+    var id = $(this).attr('href');
+    var maskHeight = $(document).height();
+    var maskWidth = $(window).width();
 	
-	<script>
-		
-		var southWest = new L.LatLng(50, 60); 
-		var northEast = new L.LatLng(60, 100); 
-		var restrictBounds = new L.LatLngBounds(southWest, northEast); 
-		
-		var map = L.map('map', {mapOptions: {zoomControl: false, panControl: false}}).setView([55, 80], 7);
-		map.setMaxBounds(restrictBounds);
-
-		var nsk = new L.tileLayer('images/nso_color/{z}/{x}/{y}.png', {
-			minZoom: 7,
-			maxZoom: 11,
-			attribution: '2013 г.',
-			tms: true
-		}).addTo(map);
+	$('#next').css("display","none");
+	$('#upload').show();
+	$('#userfile').show();
+	$('#res').html("");
+	$("#form1").css("display","block");
+	
+	$(".text").css("display","none");
+	$("#t").css("display","block");
+    
+	$('#mask').css({'width':maskWidth,'height':maskHeight,'z-index':9000});
+    $('#mask').fadeIn(1000); 
+    $('#mask').fadeTo("slow",0.8); 
+	$('#boxes, .window').css({'z-index':9999});
+    var winH = $(window).height();
+    var winW = $(window).width();
+    $(id).css('top',  winH/2-$(id).height()/2);
+    $(id).css('left', winW/2-$(id).width()/2);
+    $(id).fadeIn(2000); 
+    });
+    $('.window .closed').click(function (e) { 
+    e.preventDefault();
+	$("#form3").css("display","none");
+	$("#form2").css("display","none");
+	$('#next').css("display","none");
+    $('#mask, .window').hide();
+	$('#mask').css({'z-index':0});
+	$('#boxes, .window').css({'z-index':0});
+    }); 
+    //$('#mask').click(function () {
+    //$(this).hide();
+    //$('.window').hide();
+    //}); 
+	
+	
+	
+	$("#next").button().click(function()
+		{	            
+			$("#form1").css("display","none");
+			$("#form2").css("display","block");
 			
-				
-		// control that shows state info on hover
-		var info = L.control();
-
-		info.onAdd = function (map) {
-			this._div = L.DomUtil.create('div', 'info');
-			this.update();
-			return this._div;
-		};
-
-		info.update = function (props) {
-		if (typeof selectedfeat !== "undefined") {
-			this._div.innerHTML = '<h4>Информация</h4>' +  (props ? '<b>' + props[reg.toLowerCase()] + ' район</b><br />' + props[selectedfeat.toLowerCase()] : 'Наведите на объект');} 
-		else{this._div.innerHTML = '<h4>Информация</h4>' +  (props ? '<b>' + props.name + '</b>' : 'Наведите на объект');}
-		};
-
-		info.addTo(map);
-		
+			$("#t").css("display","none");
+			$("#t1").css("display","block");
+		});  	
 	
-		function style() {
-			return {
-				weight: 2,
-				opacity: 1,
-				color: 'white',
-				dashArray: '3',
-				fillOpacity: 0.5,
-				fillColor: '#FFEDA0' //'#'+color
-			};}
-		
-//пользовательский стиль		
-		function newstyle(feature) {
-		var color1=$.jPicker.List[0].color.active.val('hex');
-		var color2=$.jPicker.List[1].color.active.val('hex');
-		
-		var propvalue = feature.properties[selectedfeat.toLowerCase()];
-
-		var rainbow = new Rainbow(); 
-			rainbow.setSpectrum(color1, color2);
-			rainbow.setNumberRange(0, maxval);
-			var color = rainbow.colourAt(propvalue);
-
-			return {
-				weight: 2,
-				opacity: 1,
-				color: 'white',
-				dashArray: '3',
-				fillOpacity: 0.7,
-				fillColor: '#'+color
-			};
-		}
-//-----------------------------------------------------------------------------------	
-		function highlightFeature(e) {
-			var layer = e.target;
-			layer.setStyle({
-				weight: 5,
-				color: '#666',
-				dashArray: '',
-				fillOpacity: 0.5
-			});
-
-			if (!L.Browser.ie && !L.Browser.opera) {layer.bringToFront();}
-			info.update(layer.feature.properties);
-		}
-		
+	$("#next1").button().click(function()
+		{	            
+			$("#form2").css("display","none"); 	
+			$("#form3").css("display","block");
 			
-		function resetHighlight(e) {
-			geojson.resetStyle(e.target);
-			info.update();
-		}
-
-		function zoomToFeature(e) {
-			map.fitBounds(e.target.getBounds());
-		}
-
-		function onEachFeature(feature, layer) {				
-			layer.on({
-				mouseover: highlightFeature,
-				mouseout: resetHighlight,
-				click: zoomToFeature
-			});		
-		}
-//Загрузка начального json				
-		var geojson;		
-			geojson = L.geoJson(borders, {
-				style: style,
-				onEachFeature: onEachFeature
-			}).addTo(map);	
-//-----------------------------------------------------------------------------------						
-
-					
-$(document).ready(function() {
-$('#create').append("</br><div id = 'create0'>");
-$('#create').append("<div id = 'create1'>");
-$('#create').append("<div id = 'create2'>");
-$('#create').append("<div id = 'create3'>"); 
-
-//$('#create1').append("<a href='#dialog' name='modal'>Импорт данных</a></br><br />");
-$('#create1').append("Начальный цвет <span id='AlterColors1'></span></br></br>Конечный цвет &nbsp;&nbsp;&nbsp;<span id='AlterColors2'></span></br></br>"); 
-$('#create2').append("<a href='#dialog' name='modal'><input type='button' class='button3' value='Загрузить' /></a></br></br>");
-$('#create3').append("<input id='Load1' type='button' class='button3' value='Создать' />"); 
-
-    $('#AlterColors1').jPicker({window:{expandable: true}});
-	$('#AlterColors2').jPicker({window:{expandable: true}});
+			$("#t1").css("display","none");
+			$("#t2").css("display","block");
+		});  
 	
-//Создание карты	
-	$('#Load1').click (function lol() {
-		reg = $("#res2 input:checked").val();
-		selectedfeat = $("#choose :selected").val(); // Значение выбранного показателя
-		var fname = $("#fname").val();
-		var varname = fname.split('.');
-		varname = varname[0];
-				
-		$.ajax({
-			async: false,
-			type: "POST",
-			url:'extremvalues.php',
-			data:{selectedfeat: selectedfeat,fname: fname}, //replace(/\s/g,"_")
-			cache: false,
-			success:function(data) {maxval = data.split(';')[0]; minval = data.split(';')[1];},
-			failure: function() {alert("Ajax request broken");}	   
-			});
-		
-		map.removeLayer(geojson);
-		geojson = L.geoJson(eval(varname), {
-			style: newstyle,
-			onEachFeature: onEachFeature
-		}).addTo(map);
-						
-			if($('.legend').length > 0){
-			map.removeControl(legend);
-			legend.addTo(map);}
-			else {legend.addTo(map);}								
-	});
-//-----------------------------------------------------------------------------------			
-		$('#importer').load('index.html');
+	$("#back1").button().click(function()
+		{	            
+			$("#form2").css("display","none");
+			$("#form1").css("display","block");	
+			
+			$("#t1").css("display","none");
+			$("#t").css("display","block");
+		});  
+	
+	$("#back2").button().click(function()
+		{	            
+			$("#form3").css("display","none");
+			$("#form2").css("display","block"); 
+
+			$("#t2").css("display","none");
+			$("#t1").css("display","block");			
+		});  
+   
+	
+    $("#import").click(function() {
+        importer();
     });
 	
-//Создание легенды			
-		var legend = L.control({position: 'bottomleft'});
-		legend.onAdd = function (map) {
-		
-			var div = L.DomUtil.create('div', 'info legend'),
-				grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-				labels = [],
-				from, to;
-			
-			maxval = parseFloat(maxval);
-			a1=maxval / 7;
-			a=a1;
-			var color1=$.jPicker.List[0].color.active.val('hex');
-			var color2=$.jPicker.List[1].color.active.val('hex');		
-			var rainbow1 = new Rainbow(); 
-			rainbow1.setSpectrum(color1, color2);
-			rainbow1.setNumberRange(0, maxval);
-			
-			for (var i = 0; i < 7; i++) {
-				var lcolor = rainbow1.colourAt(a);
-				labels.push('<i style="background: #' + lcolor + '"></i> ' + a.toFixed(2));	
-				a = a+a1;		
-			}
-
-			div.innerHTML = labels.join('<br>');
-			return div;
-		};
-//-----------------------------------------------------------------------------------		
+   });  //Onload end
+   
+   
+		function hideBtn(){
+            $('#upload').hide();
+			$('#userfile').hide();
+            $('#res').html("Идет загрузка файла");
+        }
+        
+        function handleResponse(mes) 
+		{
+            //$('#upload').show();
+            if (mes.errors != null) {
+				$('#upload').show();
+				$('#userfile').show();
+                $('#res').html("Возникли ошибки во время загрузки файла: " + mes.errors);
+            }    
+            else {
+				$('#next').css("display","block");
+				$('#res').html("Файл успешно загружен");				
+				var csvtitle = mes.radio.split(',');
+				var count = csvtitle.length;
+				
+				$('#res2').html("");
+				$('#res3').html("");
+				
+					for ( var i = 0; i < count; i++ ) 
+						{
+							$('#res2').append("<input type='radio' name='region' value='"+csvtitle[i]+"' />" +csvtitle[i]+"</br>");
+						}									
+				
+					for ( var i = 0; i < count; i++ ) 
+						{
+							$('#res3').append("<input type='checkbox' name='feature' value='"+csvtitle[i]+"' />" +csvtitle[i]+"</br>");
+						}			
+				$('#fname').val(mes.name);
+				$('#fpath').val(mes.path);
+				//$('#res').html("Файл " + mes.radio + " загружен"); 	
+				
+            }    
+        }
 		
 						
-		var popup = L.popup();
-		L.control.mousePosition().addTo(map);	
+	function importer(){		
+			var feature = [];			 					
+				$("#res3 input:checked").each(function() {feature.push($(this).val());});	
+				var featcount = feature.length;
+			//var feat = feature.join(',');
+			var featall = [];			 					
+				$("#res3 :checkbox").each(function() {featall.push($(this).val());});	
+			var reg = $("#res2 input:checked").val();
+			
+		if(reg !==undefined && featcount > 0){
 		
-		var CreatePanel = new CreatePanel();
-		map.addControl(CreatePanel);
-				
-		var MyCustomMarker = L.Marker.extend({ 
-		bindPopup: function(htmlContent, options) {
-		if (options && options.showOnMouseOver) {
-			// call the super method
-			L.Marker.prototype.bindPopup.apply(this, [htmlContent, options]);
-			// unbind the click event
-			this.on("click", function(e) {
-			map.setView([e.latlng.lat, e.latlng.lng], 10);
-			}, this);
-			// bind to mouse over
-			this.on("mouseover", function(e) {
-				// get the element that the mouse hovered onto
-				var target = e.originalEvent.fromElement || e.originalEvent.relatedTarget;
-				var parent = this._getParent(target, "leaflet-popup");
-				// check to see if the element is a popup, and if it is this marker&#39;s popup
-				if (parent == this._popup._container)
-					return true;
-				// show the popup
-				this.openPopup();
-			}, this);
-			// and mouse out
-			this.on("mouseout", function(e) {
-				// get the element that the mouse hovered onto
-				var target = e.originalEvent.toElement || e.originalEvent.relatedTarget;
-				// check to see if the element is a popup
-				if (this._getParent(target, "leaflet-popup")) {
-					L.DomEvent.on(this._popup._container, "mouseout", this._popupMouseOut, this);
-					return true;
-				}
-				// hide the popup
-				this.closePopup();
-			}, this);
+			var fname = $("#fname").val();
+			var fpath = $("#fpath").val();
+					
+			//var queryString = "os=" + os;
+			//queryString += "&c=" + c + "&ds=" + ds + "&ser=" + ser;
+			$.ajax({
+				async: false,
+				type: "POST",
+				url:'import.php',
+				data:{
+				feat: feature,
+				featall: featall,
+				reg: reg,
+				fname: fname,
+				fpath: fpath
+				},
+				cache: false,
+				success:function(data){$('#mask, .window').hide();/*$('#res3').html(data);*/},
+				failure: function() {alert("Ajax request broken");}			   
+			});
+			
+					$("#form3").css("display","none");
+					$("#form2").css("display","none");
+			
+			var selecttext = '';		               
+				for ( var i = 0; i < featcount; i++ ) 
+					{
+						selecttext += "<option value='"+feature[i].toLowerCase().replace(/\s/g,"_")+"'>" +feature[i]+"</option>";
+					}	
+			$('#create0').html('');
+			$('#choose').remove();
+			$('#create0').append("Показатель</br><select id='choose'><option disabled>Выберите показатель</option>"+selecttext + "</select></br></br>");
+			$("#create1").css("display","block");						
+			//var filepath = 'gjson/'+fname+'.js';// Путь к файлу
+			$.getScript('gjson/'+fname+'.js');
 		}
-	},
-	_popupMouseOut: function(e) {
-		// detach the event
-		L.DomEvent.off(this._popup, "mouseout", this._popupMouseOut, this);
-		// get the element that the mouse hovered onto
-		var target = e.toElement || e.relatedTarget;
-		// check to see if the element is a popup
-		if (this._getParent(target, "leaflet-popup"))
-			return true;
-		// check to see if the marker was hovered back onto
-		if (target == this._icon)
-			return true;
-		// hide the popup
-		this.closePopup();
-	},
-	_getParent: function(element, className) {
-		var parent = element.parentNode;
-		while (parent != null) {
-			if (parent.className && L.DomUtil.hasClass(parent, className))
-				return parent;
-			parent = parent.parentNode;
-		}
-		return false;
-	}
-	});
+		else{alert("Вы не отметили необходимые поля");}
+			
+			};
 	
-		map.addControl(new rose());	
-		
-		var data = [
-		{"loc":[55.50686,78.29407], "objname":"Куйбышев"},
-		{"loc":[55.10352,82.87262], "objname":"Новосибирск"},
-		{"loc":[54.37216,83.31894], "objname":"Линево"},
-		{"loc":[55.06382,83.13698], "objname":"Раздольное"},
-		{"loc":[55.19808,79.58290], "objname":"Раисино"},
-		{"loc":[55.17103,84.43680], "objname":"Тогучин"},
-		{"loc":[54.92399,76.34674], "objname":"Тобулга"},	
-		{"loc":[55.13140,83.90121], "objname":"Горный"},
-		{"loc":[54.52507,79.78340], "objname":"Баган"},
-		{"loc":[54.93267,83.18710], "objname":"Барышево"},
-		{"loc":[55.33422,82.72568], "objname":"Колывань"},
-		{"loc":[55.31977,78.36548], "objname":"Барабинск"},
-		{"loc":[54.79435,83.12256], "objname":"Бердск"},	
-		{"loc":[55.64350,84.42719], "objname":"Болотное"},
-		{"loc":[55.69849,76.78688], "objname":"Венгерово"},
-		{"loc":[54.87977,82.78473], "objname":"Верх-Тула"},
-		{"loc":[54.51271,79.68384], "objname":"Довольное"},
-		{"loc":[54.35736,83.31894], "objname":"Дорогино"},
-		{"loc":[54.71391,78.66692], "objname":"Здвинск"},
-		{"loc":[55.29671,82.89116], "objname":"Зеленый Мыс"},
-		{"loc":[54.64126,83.33267], "objname":"Искитим"},
-		{"loc":[53.74465,78.07022], "objname":"Карасук"},
-		{"loc":[55.15769,80.29221], "objname":"Каргат"},
-		{"loc":[55.04140,82.21619], "objname":"Коченево"},
-		{"loc":[54.34295,80.47485], "objname":"Кочки"},
-		{"loc":[56.43593,79.09195], "objname":"Коб-Кордон"},
-		{"loc":[53.99526,79.24988], "objname":"Красноозерское"},
-		{"loc":[54.37656,77.29431], "objname":"Купино"},
-		{"loc":[56.57878,76.62895], "objname":"Кыштовка"},
-		{"loc":[55.04534,81.06743], "objname":"Новоиткульское"},
-		{"loc":[54.36816,84.21913], "objname":"Маслянино"},
-		{"loc":[55.30726,83.61214], "objname":"Мошково"},
-		{"loc":[55.00322,82.73529], "objname":"Обь"},
-		{"loc":[55.54456,83.85178], "objname":"Ояш"},
-		{"loc":[54.37616,81.89278], "objname":"Ордынское"},
-		{"loc":[56.36069,78.36891], "objname":"Северное"},
-		{"loc":[55.11098,80.96443], "objname":"Чулым"},
-		{"loc":[53.80106,82.30614], "objname":"Сузун"},
-		{"loc":[55.21022,76.05835], "objname":"Татарск"},
-		{"loc":[55.31352,79.67972], "objname":"Убинское"},
-		{"loc":[55.57718,75.69031], "objname":"Усть-Тарка"},
-		{"loc":[55.32133,76.76765], "objname":"Чаны"},
-		{"loc":[54.22952,83.44666], "objname":"Черепаново"},
-		{"loc":[54.72224,76.58569], "objname":"Чистоозерное"}
-		];
-				
-	var redIcon = L.icon({
-		iconUrl: 'images/marker-icon_1m.png',
-		iconSize:     [25, 41], // size of the icon
-		iconAnchor:   [14, 35], // point of the icon which will correspond to marker's location
-		popupAnchor:  [-1, -25] // point from which the popup should open relative to the iconAnchor
-	});
+	
+</script>			
+   
 
-	var markersLayer = new L.LayerGroup();	//layer contain searched elements
-	map.addLayer(markersLayer);
-	
-	map.addControl( new L.Control.Search({layer: markersLayer, initial: false}) );  //inizialize search control
-	
-	map.on( "zoomend", function( e ) {
-    if ( map.getZoom( ) <= 8 ) {
-		map.addLayer(markersLayer);
-    }
-	if ( map.getZoom( ) > 8 ) {
-        map.removeLayer(markersLayer);
-    }
-	});
-	
-	////////////populate map with markers from sample data
-	for(i in data) {
-		var objname = data[i].objname,	//value searched
-			loc = data[i].loc,		//position found
-			marker = new MyCustomMarker(new L.latLng(loc), {objname: objname, icon: redIcon} );//se property searched
-		marker.bindPopup(objname, {showOnMouseOver: true});
-		markersLayer.addLayer(marker);
-	}
-	
-	L.control.layers(koloniiMarkers, markerLayers, {collapsed: false}).addTo(map);
-	
-	
-	</script>
-	<div id="maptitle" style="width: 800px; height: 50px">
-	<p style="color:rgba(253, 114, 2, 1);">Карта Новосибирской области</p>
-	</div>
-	
-	<!--<input id="AlterColors1" type="text" value="e2ddcf" /><br />
-	<input id="AlterColors2" type="text" value="e2ddcf" /><br />
-	<span id="AlterColors1"></span></br>
-	<span id="AlterColors2"></span>
-	
-	<input id="Load1" type="button" value="Load" /><br />-->
-	
-	<div type="hidden"id="importer"></div>
 
-	
-</body>
 </html>
